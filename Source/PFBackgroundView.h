@@ -18,10 +18,10 @@
 	BOOL rebuild;
 }
 
-@property (retain) NSGradient *gradient;
-@property (retain) NSColor *backgroundColor;
-@property (retain) NSColor *minYBorderColor;
-@property (retain) NSColor *maxYBorderColor;
+@property (strong) NSGradient *gradient;
+@property (strong) NSColor *backgroundColor;
+@property (strong) NSColor *minYBorderColor;
+@property (strong) NSColor *maxYBorderColor;
 
 // Private
 - (void)rebuildImage;

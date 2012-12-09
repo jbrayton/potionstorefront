@@ -16,11 +16,6 @@
 
 @synthesize item;
 
-- (void)dealloc {
-	// Don't need to release item it's a weak reference
-	// This is here to keep scan-build happy
-	[super dealloc];
-}
 
 - (void)mouseDown:(NSEvent *)event {
 	// Make the whole view toggle the item. The checkbox can't cover the whole view.
@@ -68,7 +63,7 @@
 		// So replace the radio button with a checkbox button.
 		// For some reason just changing the button type has no effect here
 		NSButton *oldButton = (NSButton *)[[self view] viewWithTag:1];
-		NSButton *button = [[[NSButton alloc] initWithFrame:[oldButton frame]] autorelease];
+		NSButton *button = [[NSButton alloc] initWithFrame:[oldButton frame]];
 		[button setTitle:[oldButton title]];
 		[button setTarget:[oldButton target]];
 		[button setAction:[oldButton action]];

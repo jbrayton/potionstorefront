@@ -11,14 +11,6 @@
 
 @implementation PFBackgroundView
 
-- (void)dealloc {
-	[image release];
-	[backgroundColor release];
-	[gradient release];
-	[minYBorderColor release];
-	[maxYBorderColor release];
-	[super dealloc];
-}
 
 #pragma mark Drawing
 
@@ -75,7 +67,6 @@
 }
 
 - (void)rebuildImage {
-	[image release];
 
 	BOOL drawMinYBorder = minYBorderColor != nil;
 	BOOL drawMaxYBorder = maxYBorderColor != nil;
@@ -118,7 +109,6 @@
 	[gradient drawInRect:gradientRect angle:-90];
 	
 	[image unlockFocus];
-	[image autorelease];
 	image = [[NSImage alloc] initWithData:[image TIFFRepresentation]];
 
 	rebuild = NO;
@@ -129,9 +119,7 @@
 - (NSColor *)backgroundColor { return backgroundColor; }
 - (void)setBackgroundColor:(NSColor *)color {
 	if (backgroundColor != color) {
-		[backgroundColor release];
-		backgroundColor = [color retain];
-		[gradient release];
+		backgroundColor = color;
 		gradient = nil;
 	}
 }
@@ -139,9 +127,7 @@
 - (NSGradient *)gradient { return gradient; }
 - (void)setGradient:(NSGradient *)value {
 	if (value != gradient) {
-		[gradient release];
-		gradient = [value retain];
-		[backgroundColor release];
+		gradient = value;
 		backgroundColor = nil;
 		rebuild = YES;
 	}
@@ -150,8 +136,7 @@
 - (NSColor *)minYBorderColor { return minYBorderColor; }
 - (void)setMinYBorderColor:(NSColor *)color {
 	if (color != minYBorderColor) {
-		[minYBorderColor release];
-		minYBorderColor = [color retain];
+		minYBorderColor = color;
 		rebuild = YES;
 	}
 }
@@ -159,8 +144,7 @@
 - (NSColor *)maxYBorderColor { return maxYBorderColor; }
 - (void)setMaxYBorderColor:(NSColor *)color {
 	if (color != maxYBorderColor) {
-		[maxYBorderColor release];
-		maxYBorderColor = [color retain];
+		maxYBorderColor = color;
 		rebuild = YES;
 	}
 }

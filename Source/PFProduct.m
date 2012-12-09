@@ -8,6 +8,7 @@
 
 #import "PFProduct.h"
 #import "PotionStorefront.h"
+#import "PFStoreWindowController.h"
 
 #import "NSInvocationAdditions.h"
 
@@ -22,17 +23,15 @@
 }
 
 - (void)dealloc {
-	[identifierNumber release]; identifierNumber = nil;
-	[currencyCode release]; currencyCode = nil;
-	[price release]; price = nil;
-	[name release]; name = nil;
-	[byline release]; byline = nil;
-	[iconImage release]; iconImage = nil;
-	[licenseKey release]; licenseKey = nil;
-	[quantity release]; quantity = nil;
-	[radioGroupName release]; radioGroupName = nil;
+	 identifierNumber = nil;
+	 price = nil;
+	 name = nil;
+	 byline = nil;
+	 iconImage = nil;
+	 licenseKey = nil;
+	 quantity = nil;
+	 radioGroupName = nil;
 
-	[super dealloc];
 }
 
 // Helper error constructor used in fetchedProductsFromURL:error:
@@ -50,59 +49,49 @@ static NSError *ErrorWithObject(id object) {
 									 nil]];
 }
 
-+ (void)beginFetchingProductsFromURL:(NSURL *)aURL delegate:(id)delegate {
-	if ([NSThread currentThread] == [NSThread mainThread]) {
-		NSInvocation *invocation = [NSInvocation invocationWithTarget:self selector:@selector(beginFetchingProductsFromURL:delegate:)];
-		[invocation setArgument:&aURL atIndex:2];
-		[invocation setArgument:&delegate atIndex:3];
-		[NSThread detachNewThreadSelector:@selector(invoke) toTarget:invocation withObject:nil];
-		return;
-	}
-
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-	// Retain the delegate during the call
-	[delegate retain];
-
++ (void) beginFetching:(NSDictionary*) argInfo {
+    NSURL* url = argInfo[@"url"];
+    PFStoreWindowController* windowController = argInfo[@"wc"];
+    
 	NSError *error = nil;
 	NSMutableArray *products = nil;
-
+    
 	@try {
-		if (aURL == nil) {
-			NSLog(@"ERROR -- Cannot get products without a URL");
-		}
-		else {
-			NSArray *array = [NSArray arrayWithContentsOfURL:aURL];
-			if (array == nil) {
-				error = ErrorWithObject(@"Please make sure that you are connected to the Internet or try again later.");
-			}
-			else {
-				products = [NSMutableArray arrayWithCapacity:[array count]];
-				for (NSDictionary *dict in array) {
-					[products addObject:[PFProduct productWithDictionary:dict]];
-				}
-			}
-		}
-	}
-	@catch (NSException *e) {
+        NSArray *array = [NSArray arrayWithContentsOfURL:url];
+        if (array == nil) {
+            error = ErrorWithObject(@"Please make sure that you are connected to the Internet or try again later.");
+        }
+        else {
+            NSMutableArray* tmpProducts = [NSMutableArray arrayWithCapacity:[array count]];
+            for (NSDictionary *dict in array) {
+                [tmpProducts addObject:[PFProduct productWithDictionary:dict]];
+            }
+            products = tmpProducts;
+        }
+	} @catch (NSException *e) {
 		NSLog(@"ERROR -- Exception while getting products: %@", e);
 		error = ErrorWithObject([NSString stringWithFormat:NSLocalizedString(@"Error: %@", nil), [e description]]);
 	}
+    
+    if (products) {
+        [windowController performSelectorOnMainThread:@selector(fetchedProducts:) withObject:products waitUntilDone:YES];
+    } else {
+        [windowController performSelectorOnMainThread:@selector(failedToFetchProductsWithError:) withObject:error waitUntilDone:YES];
+    }
+    
+}
 
-	if ([delegate respondsToSelector:@selector(didFinishFetchingProducts:error:)]) {
-		NSInvocation *invocation = [NSInvocation invocationWithTarget:delegate selector:@selector(didFinishFetchingProducts:error:)];
-		[invocation setArgument:&products atIndex:2];
-		[invocation setArgument:&error atIndex:3];
-		[invocation invokeOnMainThreadWaitUntilDone:YES];
-	}
-
-	[delegate release];
-
-	[pool drain];
++ (void)beginFetchingProductsFromURL:(NSURL *)aURL delegate:(id)delegate {
+    NSDictionary* info = @{ @"url": aURL, @"wc": delegate } ;
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		[self performSelectorInBackground:@selector(beginFetching:) withObject:info];
+	} else {
+		[self beginFetching:info];
+    }
 }
 
 + (PFProduct *)productWithDictionary:(NSDictionary *)dictionary {
-	PFProduct *p = [[[PFProduct alloc] init] autorelease];
+	PFProduct *p = [[PFProduct alloc] init];
 	[p setIdentifierNumber:[dictionary objectForKey:@"id"]];
 	[p setName:[dictionary objectForKey:@"name"]];
 	[p setByline:[dictionary objectForKey:@"byline"]];
@@ -113,7 +102,7 @@ static NSError *ErrorWithObject(id object) {
 	if (iconImagePath) {
 		iconImagePath = [[NSBundle mainBundle] pathForResource:iconImagePath ofType:nil];
 		if (iconImagePath) {
-			[p setIconImage:[[[NSImage alloc] initWithContentsOfFile:iconImagePath] autorelease]];
+			[p setIconImage:[[NSImage alloc] initWithContentsOfFile:iconImagePath]];
 		}
 	}
 
@@ -123,7 +112,7 @@ static NSError *ErrorWithObject(id object) {
 		if (URLString) {
 			NSURL *iconImageURL = [NSURL URLWithString:URLString];
 			if (iconImageURL)
-				[p setIconImage:[[[NSImage alloc] initWithContentsOfURL:iconImageURL] autorelease]];
+				[p setIconImage:[[NSImage alloc] initWithContentsOfURL:iconImageURL]];
 		}
 	}
 
@@ -144,10 +133,10 @@ static NSError *ErrorWithObject(id object) {
 - (NSArray *)children { return nil; }
 
 - (NSNumber *)identifierNumber { return identifierNumber; }
-- (void)setIdentifierNumber:(NSNumber *)value { if (identifierNumber != value) { [identifierNumber release]; identifierNumber = [value copy]; } }
+- (void)setIdentifierNumber:(NSNumber *)value { if (identifierNumber != value) {  identifierNumber = [value copy]; } }
 
 - (NSNumber *)price { return price; }
-- (void)setPrice:(NSNumber *)value { if (price != value) { [price release]; price = [value copy]; } }
+- (void)setPrice:(NSNumber *)value { if (price != value) {  price = [value copy]; } }
 
 + (NSSet *)keyPathsForValuesAffectingPriceString {
 	return [NSSet setWithObjects:@"price", @"currencyCode", nil];
@@ -158,21 +147,21 @@ static NSError *ErrorWithObject(id object) {
 }
 
 - (NSString *)name { return name; }
-- (void)setName:(NSString *)value { if (name != value) { [name release]; name = [value copy]; } }
+- (void)setName:(NSString *)value { if (name != value) {  name = [value copy]; } }
 
 - (NSString *)byline { return byline; }
-- (void)setByline:(NSString *)value { if (byline != value) { [byline release]; byline = [value copy]; } }
+- (void)setByline:(NSString *)value { if (byline != value) {  byline = [value copy]; } }
 
 - (NSImage *)iconImage { return iconImage; }
-- (void)setIconImage:(NSImage *)value { if (iconImage != value) { [iconImage release]; iconImage = [value retain]; } }
+- (void)setIconImage:(NSImage *)value { if (iconImage != value) {  iconImage = value; } }
 
 - (NSString *)licenseKey { return licenseKey; }
-- (void)setLicenseKey:(NSString *)value { if (licenseKey != value) { [licenseKey release]; licenseKey = [value copy]; } }
+- (void)setLicenseKey:(NSString *)value { if (licenseKey != value) {  licenseKey = [value copy]; } }
 
 - (NSNumber *)quantity { return quantity; }
-- (void)setQuantity:(NSNumber *)value { if (quantity != value) { [quantity release]; quantity = [value copy]; } }
+- (void)setQuantity:(NSNumber *)value { if (quantity != value) {  quantity = [value copy]; } }
 
 - (NSString *)radioGroupName { return radioGroupName; }
-- (void)setRadioGroupName:(NSString *)value { if (radioGroupName != value) { [radioGroupName release]; radioGroupName = [value copy]; } }
+- (void)setRadioGroupName:(NSString *)value { if (radioGroupName != value) {  radioGroupName = [value copy]; } }
 
 @end

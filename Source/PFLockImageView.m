@@ -14,10 +14,10 @@
 
 - (void)awakeFromNib {
 	[securityExplanationField setAlphaValue:0.0];
-	[self addTrackingArea:[[[NSTrackingArea alloc] initWithRect:[self bounds]
+	[self addTrackingArea:[[NSTrackingArea alloc] initWithRect:[self bounds]
 															options:NSTrackingMouseEnteredAndExited|NSTrackingActiveInKeyWindow
 															  owner:self
-														   userInfo:nil] autorelease]];
+														   userInfo:nil]];
 }
 
 - (void)mouseEntered:(NSEvent *)event {

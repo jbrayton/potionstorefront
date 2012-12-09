@@ -82,5 +82,5 @@ typedef enum {
 
 
 @interface NSObject (PFOrderDelegate)
-- (void)orderDidFinishSubmitting:(PFOrder *)anOrder error:(NSError *)error;
+- (void)orderDidFinishSubmitting:(NSDictionary *)info;
 @end

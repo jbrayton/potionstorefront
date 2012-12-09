@@ -34,13 +34,6 @@ static PFStoreWindowController *gController = nil;
 	return self;
 }
 
-- (void)dealloc {
-	[storeURL release];
-	[productsPlistURL release];
-	[customAddress release];
-	[order release];
-	[super dealloc];
-}
 
 - (void)awakeFromNib {
 	[[self window] setDelegate:(id)self];
@@ -49,15 +42,15 @@ static PFStoreWindowController *gController = nil;
 	[headerStepsField setTextColor:[NSColor colorWithCalibratedRed:201/255.0 green:220/255.0 blue:255/255.0 alpha:1.0]];
 
 	// Default kerning on Helvetica Neue UltraLight is too small
-	NSMutableAttributedString *as = [[[headerTitleField attributedStringValue] mutableCopy] autorelease];
+	NSMutableAttributedString *as = [[headerTitleField attributedStringValue] mutableCopy];
 	[as addAttribute:NSKernAttributeName value:[NSNumber numberWithFloat:1.2] range:NSMakeRange(0, [as length])];
 	[headerTitleField setAttributedStringValue:as];
 
 	[mainContentView setBackgroundColor:[NSColor colorWithCalibratedWhite:0.95 alpha:1.0]];
 
 	[headerView setGradient:
-	 [[[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedRed:25/255.0 green:36/255.0 blue:43/255.0 alpha:1.0]
-									endingColor:[NSColor colorWithCalibratedRed:25/255.0 green:31/255.0 blue:38/255.0 alpha:1.0]] autorelease]];
+	 [[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedRed:25/255.0 green:36/255.0 blue:43/255.0 alpha:1.0]
+									endingColor:[NSColor colorWithCalibratedRed:25/255.0 green:31/255.0 blue:38/255.0 alpha:1.0]]];
 
 	NSArray *countries = [NSArray arrayWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"countries" ofType:@"plist"]];
 	[countriesArrayController setContent:countries];
@@ -109,7 +102,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	PFUnbindEverythingInViewTree(billingView);
 	PFUnbindEverythingInViewTree(thankYouView);
 
-	[self autorelease];
 	gController = nil;
 }
 
@@ -266,7 +258,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	if (index < [self p_countOfAddresses]) {
 		NSString *label = [[[[ABAddressBook sharedAddressBook] me] valueForProperty:kABAddressProperty] labelAtIndex:index];
-		PFAddress *address = [[[order billingAddress] copy] autorelease];
+		PFAddress *address = [[order billingAddress] copy];
 		[address fillUsingAddressBookAddressWithLabel:label];
 		[order setBillingAddress:address];
 	}
@@ -293,25 +285,27 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 #pragma mark -
 #pragma mark Delegate
 
-- (void)didFinishFetchingProducts:(NSArray *)products error:(NSError *)error {
+- (void)fetchedProducts:(NSArray *)products {
 	[productFetchProgressSpinner stopAnimation:self];
 	[productFetchProgressSpinner removeFromSuperview];
-
-	if (error) {
-		[[self window] presentError:error modalForWindow:[self window] delegate:nil didPresentSelector:nil contextInfo:NULL];
-	}
-	else {
-		// Default to USD for now
-		[products setValue:@"USD" forKey:@"currencyCode"];
-		[order setLineItems:[products filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"checked = YES"]]];
-		[productCollectionView setContent:products];
-		[orderTotalField setHidden:NO];
-		[primaryButton setEnabled:YES];
-	}
+    // Default to USD for now
+    [products setValue:@"USD" forKey:@"currencyCode"];
+    [order setLineItems:[products filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"checked = YES"]]];
+    [productCollectionView setContent:products];
+    [orderTotalField setHidden:NO];
+    [primaryButton setEnabled:YES];
 }
 
-- (void)orderDidFinishSubmitting:(PFOrder *)anOrder error:(NSError *)error {
-	[progressSpinner stopAnimation:self];
+- (void) failedToFetchProductsWithError:(NSError*) error {
+	[productFetchProgressSpinner stopAnimation:self];
+	[productFetchProgressSpinner removeFromSuperview];
+    [[self window] presentError:error modalForWindow:[self window] delegate:nil didPresentSelector:nil contextInfo:NULL];
+}
+
+- (void)orderDidFinishSubmitting:(NSDictionary *)info {
+    PFOrder* anOrder = info[@"order"];
+    NSError* error = info[@"error"];
+    [progressSpinner stopAnimation:self];
 
 	if (error == nil) {
 		[self p_setEnabled:YES toAllControlsInView:[[self window] contentView]];
@@ -359,7 +353,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 		[order setBillingAddress:customAddress];
 	}
 	else {
-		[customAddress release];
 		customAddress = [[order billingAddress] copy];
 		[order setBillingAddress:customAddress];
 		// Select the custom address in the pop up
@@ -415,7 +408,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 - (NSURL *)storeURL { return storeURL; }
 - (void)setStoreURL:(NSURL *)value {
 	if (storeURL != value) {
-		[storeURL release]; storeURL = [value copy];
+		 storeURL = [value copy];
 		if ([[storeURL scheme] isEqualToString:@"https"] == NO) {
 			// Don't show lock if it's not really secure
 			[lockImageView removeFromSuperview];
@@ -427,7 +420,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 - (NSURL *)productsPlistURL { return productsPlistURL; }
 - (void)setProductsPlistURL:(NSURL *)value {
 	if (productsPlistURL != value) {
-		[productsPlistURL release];
 		productsPlistURL = [value copy];
 
 		// Grab products from server if we haven't yet
@@ -510,7 +502,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 }
 
 - (void)p_setHeaderTitle:(NSString *)title {
-	NSMutableAttributedString *as = [[[headerTitleField attributedStringValue] mutableCopy] autorelease];
+	NSMutableAttributedString *as = [[headerTitleField attributedStringValue] mutableCopy];
 	[as replaceCharactersInRange:NSMakeRange(0, [as length]) withString:title];
 	[headerTitleField setAttributedStringValue:as];
 }

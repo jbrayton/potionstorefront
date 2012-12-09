@@ -9,10 +9,10 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PFCollectionRowView : NSView {
-	NSCollectionViewItem *item;
+	NSCollectionViewItem *__unsafe_unretained item;
 }
 
-@property(assign) NSCollectionViewItem *item;
+@property(unsafe_unretained) NSCollectionViewItem *item;
 
 @end
 

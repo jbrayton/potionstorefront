@@ -38,18 +38,15 @@
 }
 
 - (void)dealloc {
-	[lineItems release]; lineItems = nil;
-	[currencyCode release]; currencyCode = nil;
-	[billingAddress release]; billingAddress = nil;
+	 billingAddress = nil;
 
-	[creditCardNumber release]; creditCardNumber = nil;
-	[creditCardSecurityCode release]; creditCardSecurityCode = nil;
-	[creditCardExpirationMonth release]; creditCardExpirationMonth = nil;
-	[creditCardExpirationYear release]; creditCardExpirationYear = nil;
+	 creditCardNumber = nil;
+	 creditCardSecurityCode = nil;
+	 creditCardExpirationMonth = nil;
+	 creditCardExpirationYear = nil;
 
-	[submitURL release]; submitURL = nil;
+	 submitURL = nil;
 
-	[super dealloc];
 }
 
 - (NSDictionary *)dictionaryRepresentationForPotionStore {
@@ -144,82 +141,80 @@ fail:
 		return;
 	}
 
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSError *error = nil;
+	@autoreleasepool {
+		NSError *error = nil;
 
-	@try {
-		if ([self submitURL] == nil) {
-			NSLog(@"ERROR -- Cannot submit order without a URL");
-			return;
-		}
-		NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[self submitURL]];
-		NSHTTPURLResponse *response = nil;
-		NSString *json = [[self dictionaryRepresentationForPotionStore] JSONString];
+		@try {
+			if ([self submitURL] == nil) {
+				NSLog(@"ERROR -- Cannot submit order without a URL");
+				return;
+			}
+			NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[self submitURL]];
+			NSHTTPURLResponse *response = nil;
+			NSString *json = [[self dictionaryRepresentationForPotionStore] JSONString];
 
-		if (DEBUG_POTION_STORE_FRONT) {
-			NSLog(@"SENDING JSON: %@", json);
-		}
-
-		[postRequest setHTTPMethod:@"POST"];
-		[postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-		[postRequest setValue:@"PotionStorefront" forHTTPHeaderField:@"User-Agent"];
-		[postRequest setHTTPBody:[json dataUsingEncoding:NSUTF8StringEncoding]];
-		[postRequest setTimeoutInterval:15.0];
-
-		NSData *responseData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&error];
-		if (error != nil) {
-			error = ErrorWithObject(error);
-			goto done;
-		}
-
-		NSString *responseBody = [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease];
-		NSInteger statusCode = [response statusCode];
-
-		if (DEBUG_POTION_STORE_FRONT) {
-			NSLog(@"STATUS: %ld", (long)statusCode);
-			NSLog(@"REPLY BODY: %@", responseBody);
-		}
-
-		if (statusCode == 200) {
-			NSDictionary *responseOrder = [responseBody objectFromJSONString];
 			if (DEBUG_POTION_STORE_FRONT) {
-				NSLog(@"RESPONSE ORDER: %@", responseOrder);
+				NSLog(@"SENDING JSON: %@", json);
 			}
 
-			NSInteger licensedCount = 0;
+			[postRequest setHTTPMethod:@"POST"];
+			[postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+			[postRequest setValue:@"PotionStorefront" forHTTPHeaderField:@"User-Agent"];
+			[postRequest setHTTPBody:[json dataUsingEncoding:NSUTF8StringEncoding]];
+			[postRequest setTimeoutInterval:15.0];
 
-			// Update license key from returned order
-			for (PFProduct *myitem in lineItems) {
-				for (NSDictionary *dict in [responseOrder objectForKey:@"line_items"]) {
-					if ([[dict objectForKey:@"product_id"] isEqual:[myitem identifierNumber]]) {
-						NSAssert([myitem checked], @"Only purchased items should be getting license keys");
-						[myitem setLicenseKey:[dict objectForKey:@"license_key"]];
-						licensedCount += 1;
+			NSData *responseData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&error];
+			if (error != nil) {
+				error = ErrorWithObject(error);
+				goto done;
+			}
+
+			NSString *responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+			NSInteger statusCode = [response statusCode];
+
+			if (DEBUG_POTION_STORE_FRONT) {
+				NSLog(@"STATUS: %ld", (long)statusCode);
+				NSLog(@"REPLY BODY: %@", responseBody);
+			}
+
+			if (statusCode == 200) {
+				NSDictionary *responseOrder = [responseBody objectFromJSONString];
+				if (DEBUG_POTION_STORE_FRONT) {
+					NSLog(@"RESPONSE ORDER: %@", responseOrder);
+				}
+
+				NSInteger licensedCount = 0;
+
+				// Update license key from returned order
+				for (PFProduct *myitem in lineItems) {
+					for (NSDictionary *dict in [responseOrder objectForKey:@"line_items"]) {
+						if ([[dict objectForKey:@"product_id"] isEqual:[myitem identifierNumber]]) {
+							NSAssert([myitem checked], @"Only purchased items should be getting license keys");
+							[myitem setLicenseKey:[dict objectForKey:@"license_key"]];
+							licensedCount += 1;
+						}
 					}
 				}
-			}
 
-			if (licensedCount == 0)
-				error = ErrorWithObject(NSLocalizedString(@"The order was charged, but a license key was not received. Please contact support.", nil));
+				if (licensedCount == 0)
+					error = ErrorWithObject(NSLocalizedString(@"The order was charged, but a license key was not received. Please contact support.", nil));
+			}
+			else {
+				error = ErrorWithJSONResponse(responseBody);
+			}
 		}
-		else {
-			error = ErrorWithJSONResponse(responseBody);
+		@catch (NSException *e) {
+			NSLog(@"ERROR -- Exception while submitting order: %@", e);
+			error = ErrorWithObject(e);
 		}
-	}
-	@catch (NSException *e) {
-		NSLog(@"ERROR -- Exception while submitting order: %@", e);
-		error = ErrorWithObject(e);
-	}
 
 done:
-	if ([[self delegate] respondsToSelector:@selector(orderDidFinishSubmitting:error:)]) {
-		NSInvocation *invocation = [NSInvocation invocationWithTarget:[self delegate] selector:@selector(orderDidFinishSubmitting:error:)];
-		[invocation setArgument:&self atIndex:2];
-		[invocation setArgument:&error atIndex:3];
-		[invocation invokeOnMainThreadWaitUntilDone:YES];
-	}
+		if ([[self delegate] respondsToSelector:@selector(orderDidFinishSubmitting:)]) {
+        NSDictionary* info = @{ @"order": self, @"error": error } ;
+        [delegate performSelectorOnMainThread:@selector(orderDidFinishSubmitting:) withObject:info waitUntilDone:YES];
+		}
 
-	[pool release];
+	}
 }
 
 - (NSString *)cleanedCreditCardNumber {
@@ -326,43 +321,41 @@ done:
 }
 
 - (NSURL *)submitURL { return submitURL; }
-- (void)setSubmitURL:(NSURL *)value { if (submitURL != value) { [submitURL release]; submitURL = [value copy]; } }
+- (void)setSubmitURL:(NSURL *)value { if (submitURL != value) {  submitURL = [value copy]; } }
 
 // Just return the name from the address
 - (NSString *)licenseeName { return [NSString stringWithFormat:@"%@ %@", [[self billingAddress] firstName], [[self billingAddress] lastName]]; }
 
 - (PFAddress *)billingAddress { return billingAddress; }
-- (void)setBillingAddress:(PFAddress *)value { if (billingAddress != value) { [billingAddress release]; billingAddress = [value retain]; } }
+- (void)setBillingAddress:(PFAddress *)value { if (billingAddress != value) {  billingAddress = value; } }
 
 - (NSString *)creditCardNumber { return creditCardNumber; }
-- (void)setCreditCardNumber:(NSString *)value { if (creditCardNumber != value) { [creditCardNumber release]; creditCardNumber = [value copy]; } }
+- (void)setCreditCardNumber:(NSString *)value { if (creditCardNumber != value) {  creditCardNumber = [value copy]; } }
 
 - (NSString *)creditCardSecurityCode { return creditCardSecurityCode; }
-- (void)setCreditCardSecurityCode:(NSString *)value { if (creditCardSecurityCode != value) { [creditCardSecurityCode release]; creditCardSecurityCode = [value copy]; } }
+- (void)setCreditCardSecurityCode:(NSString *)value { if (creditCardSecurityCode != value) {  creditCardSecurityCode = [value copy]; } }
 
 - (NSNumber *)creditCardExpirationMonth { return creditCardExpirationMonth; }
 - (void)setCreditCardExpirationMonth:(id)value {
 	if (creditCardExpirationMonth != value) {
-		[creditCardExpirationMonth release];
 		if ([value isKindOfClass:[NSNumber class]])
 			creditCardExpirationMonth = [value copy];
 		else if ([value isKindOfClass:[NSString class]])
-			creditCardExpirationMonth = [[NSNumber numberWithInteger:[value integerValue]] retain];
+			creditCardExpirationMonth = [NSNumber numberWithInteger:[value integerValue]];
 		else
-			creditCardExpirationMonth = [value retain];
+			creditCardExpirationMonth = value;
 	}
 }
 
 - (NSNumber *)creditCardExpirationYear { return creditCardExpirationYear; }
 - (void)setCreditCardExpirationYear:(id)value {
 	if (creditCardExpirationYear != value) {
-		[creditCardExpirationYear release];
 		if ([value isKindOfClass:[NSNumber class]])
 			creditCardExpirationYear = [value copy];
 		else if ([value isKindOfClass:[NSString class]])
-			creditCardExpirationYear = [[NSNumber numberWithInteger:[value integerValue]] retain];
+			creditCardExpirationYear = [NSNumber numberWithInteger:[value integerValue]];
 		else
-			creditCardExpirationYear = [value retain];
+			creditCardExpirationYear = value;
 	}
 }
 
@@ -426,7 +419,7 @@ fail:
 
 	// Validate expiration date
 	NSCalendar *cal = [NSCalendar currentCalendar];
-	NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+	NSDateComponents *comps = [[NSDateComponents alloc] init];
 	[comps setMonth:month];
 	[comps setYear:year + 2000];
 	[comps setDay:2];
