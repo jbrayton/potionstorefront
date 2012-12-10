@@ -128,6 +128,18 @@ fail:
 	return ErrorWithObject(@"Could not process order due to an unexpected error. Please try again later.");
 }
 
+- (id) initWithStripePublishableKey:(NSString*) argStripePublishableKey {
+    if (![self init]) {
+        return nil;
+    }
+    stripePublishableKey = argStripePublishableKey;
+    return self;
+}
+
+- (void) setStripePublishableKey:(NSString*) argStripePublishableKey {
+    stripePublishableKey = argStripePublishableKey;
+}
+
 - (void)submitInBackground {
 	if ([NSThread currentThread] == [NSThread mainThread]) {
 		[self p_prepareForSubmission];
@@ -137,75 +149,132 @@ fail:
 
 	@autoreleasepool {
 		NSError *error = nil;
+        NSHTTPURLResponse *response = nil;
 
 		@try {
 			if ([self submitURL] == nil) {
 				NSLog(@"ERROR -- Cannot submit order without a URL");
 				return;
 			}
-			NSMutableURLRequest *postRequest = [NSMutableURLRequest requestWithURL:[self submitURL]];
-			NSHTTPURLResponse *response = nil;
-			NSString *json = [[self dictionaryRepresentationForPotionStore] JSONString];
+            
+            NSString* cardNumber = [self creditCardNumber];
+            cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
+            cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"\t" withString:@""];
+            cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
+            cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"_" withString:@""];
+            NSString* cardNumberEncoded = [self stringByUrlEncoding:cardNumber];
+            NSString* secCodeEncoded = [self stringByUrlEncoding:[self creditCardSecurityCode]];
+            NSString* args = [NSString stringWithFormat:@"card[number]=%@&card[exp_month]=%@&card[exp_year]=%@&card[cvc]=%@", cardNumberEncoded, [self creditCardExpirationMonth], [self creditCardExpirationYear], secCodeEncoded];
+            NSMutableURLRequest* submitTokenRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://api.stripe.com/v1/tokens"]];
+            [submitTokenRequest setHTTPMethod:@"POST"];
+            [submitTokenRequest setHTTPBody:[args dataUsingEncoding:NSUTF8StringEncoding]];
+            [submitTokenRequest setHTTPShouldHandleCookies:NO];
+            [submitTokenRequest addValue:[NSString stringWithFormat:@"Bearer %@", stripePublishableKey] forHTTPHeaderField:@"Authorization"];
+            
+            NSData* responseData = [NSURLConnection sendSynchronousRequest:submitTokenRequest returningResponse:&response error:&error];
+			NSString *responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+			NSInteger statusCode = [response statusCode];
+            
+            NSString* token = nil;
+            NSString* errorMessage = nil;
+            @try {
+                NSDictionary *responseOrder = [responseBody objectFromJSONString];
+                if (statusCode == 200) {
+                    token = responseOrder[@"id"];
+                } else if (responseOrder) {
+                    errorMessage = responseOrder[@"error"][@"message"];
+                } else if (response) {
+                    errorMessage = [NSString stringWithFormat:@"Unexpected response code (%ld) from credit card processor.", [response statusCode]];
+                } else {
+                    errorMessage = @"Unable to communicate with credit card processor.";
+                }
+            } @catch (NSException* e) {
+                errorMessage = NSLocalizedString(@"Unable to process the response.", @"");
+            }
+            
+            if (errorMessage) {
+                errorMessage = [errorMessage stringByAppendingString:@" Your credit card was not charged."];
+                NSError* error = ErrorWithObject(errorMessage);
+                NSDictionary* info = @{ @"order": self, @"error": error } ;
+                [delegate performSelectorOnMainThread:@selector(orderDidFinishSubmitting:) withObject:info waitUntilDone:YES];
+                return;
+            }
+            
+            
+            NSString* tokenEncoded = [self stringByUrlEncoding:token];
+            NSString* nameEncoded = [self stringByUrlEncoding:[NSString stringWithFormat:@"%@ %@", [[self billingAddress] firstName], [[self billingAddress] lastName]]];
+            NSString* emailEncoded = [self stringByUrlEncoding:[[self billingAddress] email]];
+            NSNumber* product = [[self lineItems][0] identifierNumber];
+            NSInteger quantity = 1;
+            NSInteger totalPriceCents = [self totalPriceCents];
+            
+            NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/noindex/store/processtransaction.php"]];
+            args = [NSString stringWithFormat:@"token=%@&name=%@&email=%@&product=%@&quantity=%ld&totalPriceCents=%ld", tokenEncoded, nameEncoded, emailEncoded, product, quantity, totalPriceCents];
+            if ([[[self billingAddress] company] length]) {
+                NSString* companyEncoded = [self stringByUrlEncoding:[[self billingAddress] company]];
+                args = [args stringByAppendingFormat:@"&company=%@", companyEncoded];
+            }
+            //if (couponCode) {
+            //    args = [args stringByAppendingFormat:@"&couponCode=%@", couponCodeEncoded];
+            //}
+            [registerRequest setHTTPMethod:@"POST"];
+            [registerRequest setHTTPBody:[args dataUsingEncoding:NSUTF8StringEncoding]];
+            [registerRequest setHTTPShouldHandleCookies:NO];
 
-			if (DEBUG_POTION_STORE_FRONT) {
-				NSLog(@"SENDING JSON: %@", json);
-			}
-
-			[postRequest setHTTPMethod:@"POST"];
-			[postRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-			[postRequest setValue:@"PotionStorefront" forHTTPHeaderField:@"User-Agent"];
-			[postRequest setHTTPBody:[json dataUsingEncoding:NSUTF8StringEncoding]];
-			[postRequest setTimeoutInterval:15.0];
-
-			NSData *responseData = [NSURLConnection sendSynchronousRequest:postRequest returningResponse:&response error:&error];
+			responseData = [NSURLConnection sendSynchronousRequest:registerRequest returningResponse:&response error:&error];
 			if (error != nil) {
 				error = ErrorWithObject(error);
 				goto done;
 			}
 
-			NSString *responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-			NSInteger statusCode = [response statusCode];
+			responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+			statusCode = [response statusCode];
+            
+            NSArray* regCodes = @[];
+            BOOL success = NO;
+            errorMessage = nil;
+            @try {
+                NSDictionary* responseObj = [responseBody objectFromJSONString];
+                if (responseObj) {
+                    errorMessage = responseObj[@"error"];
+                    regCodes = responseObj[@"registrationCodes"];
+                    success = [responseObj[@"success"] boolValue];
+                } else {
+                    errorMessage = NSLocalizedString(@"Unable to retrieve registration codes. Please email us at support@goldenhillsoftware.com.", @"");
+                }
+            } @catch (NSException* e) {
+                errorMessage = NSLocalizedString(@"Unable to retrieve registration codes. Please email us at support@goldenhillsoftware.com.", @"");
+            }
 
-			if (DEBUG_POTION_STORE_FRONT) {
-				NSLog(@"STATUS: %ld", (long)statusCode);
-				NSLog(@"REPLY BODY: %@", responseBody);
-			}
+            
 
-			if (statusCode == 200) {
-				NSDictionary *responseOrder = [responseBody objectFromJSONString];
-				if (DEBUG_POTION_STORE_FRONT) {
-					NSLog(@"RESPONSE ORDER: %@", responseOrder);
-				}
-
+			if (success) {
 				NSInteger licensedCount = 0;
 
 				// Update license key from returned order
 				for (PFProduct *myitem in lineItems) {
-					for (NSDictionary *dict in [responseOrder objectForKey:@"line_items"]) {
-						if ([[dict objectForKey:@"product_id"] isEqual:[myitem identifierNumber]]) {
-							NSAssert([myitem checked], @"Only purchased items should be getting license keys");
-							[myitem setLicenseKey:[dict objectForKey:@"license_key"]];
-							licensedCount += 1;
-						}
-					}
+                    [myitem setLicenseKey:regCodes[0]];
+                    licensedCount += [regCodes count];
 				}
 
 				if (licensedCount == 0)
-					error = ErrorWithObject(NSLocalizedString(@"The order was charged, but a license key was not received. Please contact support.", nil));
+					error = ErrorWithObject(NSLocalizedString(@"The order was charged, but a license key was not received. Please email us at support@goldenhillsoftware.com", nil));
+			} else {
+				error = ErrorWithJSONResponse(errorMessage);
 			}
-			else {
-				error = ErrorWithJSONResponse(responseBody);
-			}
-		}
-		@catch (NSException *e) {
+		} @catch (NSException *e) {
 			NSLog(@"ERROR -- Exception while submitting order: %@", e);
 			error = ErrorWithObject(e);
 		}
 
 done:
 		if ([[self delegate] respondsToSelector:@selector(orderDidFinishSubmitting:)]) {
-        NSDictionary* info = @{ @"order": self, @"error": error } ;
-        [delegate performSelectorOnMainThread:@selector(orderDidFinishSubmitting:) withObject:info waitUntilDone:YES];
+            NSMutableDictionary* info = [NSMutableDictionary dictionary];
+            info[@"order"] = self;
+            if(error) {
+                info[@"error"] = error;
+            }
+            [delegate performSelectorOnMainThread:@selector(orderDidFinishSubmitting:) withObject:info waitUntilDone:YES];
 		}
 
 	}
@@ -309,25 +378,26 @@ done:
 		return @"$";
 }
 
-+ (NSSet *)keyPathsForValuesAffectingTotalAmount {
++ (NSSet *)keyPathsForValuesAffectingTotalPriceCents {
 	return [NSSet setWithObject:@"lineItems"];
 }
 
-- (CGFloat)totalAmount {
-	CGFloat total = 0;
+- (NSInteger)totalPriceCents {
+	NSInteger totalCents = 0;
 	for (PFProduct *product in lineItems) {
-		total += [[product price] floatValue] * [[product quantity] floatValue];
+        totalCents += ([product priceCents] * [product quantity]);
 	}
 
-	return total;
+	return totalCents;
 }
 
 + (NSSet *)keyPathsForValuesAffectingTotalAmountString {
-	return [NSSet setWithObjects:@"currencyCode", @"totalAmount", nil];
+	return [NSSet setWithObjects:@"currencyCode", @"lineItems", nil];
 }
 
 - (NSString *)totalAmountString {
-	return [NSString stringWithFormat:@"%@%.2lf", [PFOrder currencySymbolForCode:[self currencyCode]], [self totalAmount]];
+    float totalAmount = (float) [self totalPriceCents] / 100;
+	return [NSString stringWithFormat:@"%@%.2lf", [PFOrder currencySymbolForCode:[self currencyCode]], totalAmount];
 }
 
 - (NSURL *)submitURL { return submitURL; }
@@ -476,13 +546,22 @@ fail:
 - (void)p_prepareForSubmission {
 	// Trim all the string fields of the address
 	NSArray *keys = [NSArray arrayWithObjects:
-					 @"firstName", @"lastName", @"company", @"address1", @"address2",
-					 @"city", @"state", @"zipcode", @"countryCode", @"email",
+					 @"firstName", @"lastName", @"company", @"email",
 					 nil];
 	for (NSString *key in keys) {
 		NSString *trimmed = [[[self billingAddress] valueForKey:key] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 		[[self billingAddress] setValue:trimmed forKey:key];
 	}
 }
+
+- (NSString*) stringByUrlEncoding:(NSString*) argInput {
+	return (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(
+                                                                                 NULL,
+                                                                                 (__bridge CFStringRef)argInput,
+                                                                                 NULL,
+                                                                                 (CFStringRef)@"!*'();:@&=+$,/?%#[]",
+                                                                                 kCFStringEncodingUTF8 );
+}
+
 
 @end

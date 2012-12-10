@@ -27,7 +27,7 @@ static PFStoreWindowController *gController = nil;
 - (id)init {
 	self = [super initWithWindowNibName:@"Store"];
 	if (self) {
-		order = [[PFOrder alloc] init];
+		order = [[PFOrder alloc] initWithStripePublishableKey:stripePublishableKey];
 	}
 	return self;
 }
@@ -143,7 +143,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	// We want to validate fields right when the editor tries to commit the editing for some fields
 	validateFieldsImmediately = YES;
 
-	if ([order totalAmount] == 0) {
+	if ([order totalPriceCents] == 0) {
 		[orderTotalField setTextColor:[[NSColor redColor] shadowWithLevel:0.15]];
 		NSBeep();
 		return;
@@ -413,6 +413,11 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 - (void)setCancelButtonQuits:(BOOL)flag {
 	cancelButtonQuits = flag;
+}
+
+- (void)setStripePublishableKey:(NSString*) argStripePublishableKey {
+    stripePublishableKey = argStripePublishableKey;
+    [order setStripePublishableKey:argStripePublishableKey];
 }
 
 #pragma mark -

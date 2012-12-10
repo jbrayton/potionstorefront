@@ -23,6 +23,8 @@ typedef enum {
 @interface PFOrder : NSObject {
 	id delegate;
 
+    NSString* stripePublishableKey;
+    
 	NSArray *lineItems;
 	NSString *currencyCode;
 	PFAddress *billingAddress;
@@ -34,6 +36,10 @@ typedef enum {
 
 	NSURL *submitURL;
 }
+
+- (id) initWithStripePublishableKey:(NSString*) argStripePublishableKey;
+
+- (void) setStripePublishableKey:(NSString*) argStripePublishableKey;
 
 - (void)submitInBackground;
 
@@ -51,8 +57,8 @@ typedef enum {
 - (id)delegate;
 - (void)setDelegate:(id)object;
 
-- (CGFloat)totalAmount;
 - (NSString *)totalAmountString;
+- (NSInteger) totalPriceCents;
 
 - (NSURL *)submitURL;
 - (void)setSubmitURL:(NSURL *)value;

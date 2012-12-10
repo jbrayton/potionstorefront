@@ -44,6 +44,10 @@ static PotionStorefront *gStorefront = nil;
 	[[PFStoreWindowController sharedController] setProductsPlistURL:URL];
 }
 
+- (void) setStripePublishableKey:(NSString*) argStripePublishableKey {
+	[[PFStoreWindowController sharedController] setStripePublishableKey:argStripePublishableKey];
+}
+
 - (void)setWebStoreSupportsPayPal:(BOOL)flag1 googleCheckout:(BOOL)flag2 {
 	[[PFStoreWindowController sharedController] setWebStoreSupportsPayPal:flag1 googleCheckout:flag2];
 }

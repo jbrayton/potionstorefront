@@ -27,6 +27,8 @@
 - (NSURL *)productsPlistURL;
 - (void)setProductsPlistURL:(NSURL *)URL;
 
+- (void) setStripePublishableKey:(NSString*) argPublishableKey;
+
 - (void)setWebStoreSupportsPayPal:(BOOL)flag1 googleCheckout:(BOOL)flag2;
 
 - (void)setCancelButtonQuits:(BOOL)flag;

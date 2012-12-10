@@ -15,12 +15,12 @@
 @interface PFProduct : NSObject {
 	NSNumber *identifierNumber;
 	NSString *currencyCode;
-	NSNumber *price;
+	NSInteger priceCents;
 	NSString *name;
 	NSString *byline;
 	NSImage *iconImage;
 	NSString *licenseKey;
-	NSNumber *quantity;
+	NSInteger quantity;
 
 	// Checked products get placed into the order
 	NSString *radioGroupName;
@@ -39,8 +39,8 @@
 - (NSNumber *)identifierNumber;
 - (void)setIdentifierNumber:(NSNumber *)value;
 
-- (NSNumber *)price;
-- (void)setPrice:(NSNumber *)value;
+- (NSInteger)priceCents;
+- (void)setPriceCents:(NSInteger)value;
 
 - (NSString *)priceString;
 
@@ -56,8 +56,8 @@
 - (NSString *)licenseKey;
 - (void)setLicenseKey:(NSString *)value;
 
-- (NSNumber *)quantity;
-- (void)setQuantity:(NSNumber *)value;
+- (NSInteger)quantity;
+- (void)setQuantity:(NSInteger)value;
 
 - (NSString *)radioGroupName;
 - (void)setRadioGroupName:(NSString *)value;

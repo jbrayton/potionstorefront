@@ -18,20 +18,8 @@
 @synthesize checked;
 
 - (id)init {
-	[self setQuantity:[NSNumber numberWithInteger:1]];
+	[self setQuantity:1];
 	return self;
-}
-
-- (void)dealloc {
-	 identifierNumber = nil;
-	 price = nil;
-	 name = nil;
-	 byline = nil;
-	 iconImage = nil;
-	 licenseKey = nil;
-	 quantity = nil;
-	 radioGroupName = nil;
-
 }
 
 // Helper error constructor used in fetchedProductsFromURL:error:
@@ -95,7 +83,7 @@ static NSError *ErrorWithObject(id object) {
 	[p setIdentifierNumber:[dictionary objectForKey:@"id"]];
 	[p setName:[dictionary objectForKey:@"name"]];
 	[p setByline:[dictionary objectForKey:@"byline"]];
-	[p setPrice:[dictionary objectForKey:@"price"]];
+	[p setPriceCents:[[dictionary objectForKey:@"productPriceCents"] intValue]];
 
 	// Check for a image path first to see if we can load it from the bundle
 	NSString *iconImagePath = [dictionary objectForKey:@"iconImagePath"];
@@ -135,15 +123,16 @@ static NSError *ErrorWithObject(id object) {
 - (NSNumber *)identifierNumber { return identifierNumber; }
 - (void)setIdentifierNumber:(NSNumber *)value { if (identifierNumber != value) {  identifierNumber = [value copy]; } }
 
-- (NSNumber *)price { return price; }
-- (void)setPrice:(NSNumber *)value { if (price != value) {  price = [value copy]; } }
+- (NSInteger)priceCents { return priceCents; }
+- (void)setPriceCents:(NSInteger)value { priceCents = value; }
 
 + (NSSet *)keyPathsForValuesAffectingPriceString {
 	return [NSSet setWithObjects:@"price", @"currencyCode", nil];
 }
 
 - (NSString *)priceString {
-	return [NSString stringWithFormat:@"%@%.2lf", [PFOrder currencySymbolForCode:[self currencyCode]], [[self price] floatValue]];
+    CGFloat priceFloat = (float) [self priceCents] / 100;
+	return [NSString stringWithFormat:@"%@%.2lf", [PFOrder currencySymbolForCode:[self currencyCode]], priceFloat];
 }
 
 - (NSString *)name { return name; }
@@ -158,8 +147,8 @@ static NSError *ErrorWithObject(id object) {
 - (NSString *)licenseKey { return licenseKey; }
 - (void)setLicenseKey:(NSString *)value { if (licenseKey != value) {  licenseKey = [value copy]; } }
 
-- (NSNumber *)quantity { return quantity; }
-- (void)setQuantity:(NSNumber *)value { if (quantity != value) {  quantity = [value copy]; } }
+- (NSInteger)quantity { return quantity; }
+- (void)setQuantity:(NSInteger)value { quantity = value; }
 
 - (NSString *)radioGroupName { return radioGroupName; }
 - (void)setRadioGroupName:(NSString *)value { if (radioGroupName != value) {  radioGroupName = [value copy]; } }

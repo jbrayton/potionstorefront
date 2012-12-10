@@ -57,6 +57,8 @@ enum {
 	IBOutlet NSTextField *creditCardExpirationMonthField;
 	IBOutlet NSTextField *creditCardExpirationYearField;
 
+    NSString* stripePublishableKey;
+    
 	PFAddress *customAddress;
 
 	// STUFF FOR THANK YOU VIEW
@@ -86,6 +88,7 @@ enum {
 - (void)setProductsPlistURL:(NSURL *)value;
 - (void)setWebStoreSupportsPayPal:(BOOL)flag1 googleCheckout:(BOOL)flag2;
 - (void)setCancelButtonQuits:(BOOL)flag;
+- (void)setStripePublishableKey:(NSString*) argStripePublishableKey;
 
 // Actions
 - (IBAction)showPricing:(id)sender;

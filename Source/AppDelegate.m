@@ -17,6 +17,7 @@
 	[[PotionStorefront sharedStorefront] setPotionStoreURL:[NSURL URLWithString:@"https://localhost:3000/store"]];
 	[[PotionStorefront sharedStorefront] setProductsPlistURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/noindex/store/cloudpullproductinfo.plist"]];
 	[[PotionStorefront sharedStorefront] setWebStoreSupportsPayPal:NO googleCheckout:NO];
+    [[PotionStorefront sharedStorefront] setStripePublishableKey:@"pk_0JwHjZIfVZeGkFZMLqbkKLzsrkUXB"];
 	[[PotionStorefront sharedStorefront] runModal];
 //	[[PotionStorefront sharedStorefront] beginSheetModalForWindow:mainWindow];
 }
