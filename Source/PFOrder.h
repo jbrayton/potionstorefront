@@ -15,7 +15,9 @@ typedef enum {
 	PFVisaType,
 	PFMasterCardType,
 	PFAmexType,
-	PFDiscoverType
+	PFDiscoverType,
+    PFDinersClubType,
+    PFJcbCardType
 } PFCreditCardType;
 
 @interface PFOrder : NSObject {

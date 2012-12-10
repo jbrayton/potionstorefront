@@ -44,10 +44,6 @@ enum {
 	// Labels
 	IBOutlet NSTextField *firstNameLabel;
 	IBOutlet NSTextField *lastNameLabel;
-	IBOutlet NSTextField *address1Label;
-	IBOutlet NSTextField *cityLabel;
-	IBOutlet NSTextField *stateLabel;
-	IBOutlet NSTextField *zipcodeLabel;
 	IBOutlet NSTextField *emailLabel;
 	IBOutlet NSTextField *creditCardNumberLabel;
 	IBOutlet NSTextField *creditCardSecurityCodeLabel;
@@ -55,7 +51,6 @@ enum {
 
 	// Input Fields
 	IBOutlet NSTextField *firstNameField;
-	IBOutlet NSTextField *address1Field;
 	IBOutlet NSTextField *emailField;
 	IBOutlet NSTextField *creditCardNumberField;
 	IBOutlet NSTextField *creditCardExpirationMonthField;
@@ -106,14 +101,10 @@ enum {
 - (IBAction)updatedOrderLineItems:(id)sender;
 - (IBAction)purchase:(id)sender;
 - (IBAction)cancel:(id)sender;
-- (IBAction)selectAddress:(id)sender;
-- (IBAction)selectCountry:(id)sender;
 - (IBAction)openWebStore:(id)sender;
 - (IBAction)showRegistrationWindow:(id)sender;
 
 // Private
-- (NSInteger)p_countOfAddresses;
-- (void)p_setupAddressPopUpButton;
 - (void)p_setEnabled:(BOOL)enabled toAllControlsInView:(NSView *)view;
 - (void)p_setContentView:(NSView *)view;
 - (void)p_setHeaderTitle:(NSString *)title;

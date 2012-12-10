@@ -63,12 +63,6 @@
 		[orderDict setObject:[a lastName]	forKey:@"last_name"];
 		[orderDict setObject:[self licenseeName] forKey:@"licensee_name"];
 		if ([a company]) [orderDict setObject:[a company]	forKey:@"company"];
-		[orderDict setObject:[a address1]	forKey:@"address1"];
-		if ([a address2]) [orderDict setObject:[a address2]	forKey:@"address2"];
-		[orderDict setObject:[a city]		forKey:@"city"];
-		[orderDict setObject:[a state]		forKey:@"state"];
-		[orderDict setObject:[a zipcode]	forKey:@"zipcode"];
-		[orderDict setObject:[a countryCode] forKey:@"country"];
 		[orderDict setObject:[a email]		forKey:@"email"];
 		[orderDict setObject:creditCard		forKey:@"payment_type"];
 		[orderDict setObject:[self cleanedCreditCardNumber]			forKey:@"cc_number"];
@@ -225,16 +219,24 @@ done:
 - (PFCreditCardType)creditCardType {
 	NSString *ccnum = [self cleanedCreditCardNumber];
 
-	if ([ccnum length] == 0) return PFUnknownType;
+	if ([ccnum length] == 0) {
+        return PFUnknownType;
+    }
 
+    if ([ccnum hasPrefix:@"2131"] || [ccnum hasPrefix:@"1800"]) {
+        return PFJcbCardType;
+    }
 	if ([ccnum hasPrefix:@"3"]) {
 		// Diners (Mastercard) (36) or Amex (34 or 37)
-		if ([ccnum length] < 2)
-			return PFUnknownType;
-		else if ([ccnum hasPrefix:@"36"])
-			return PFMasterCardType;
-		else
-			return PFAmexType;
+        if ([ccnum hasPrefix:@"36"] || [ccnum hasPrefix:@"38"] || [ccnum hasPrefix:@"300"] || [ccnum hasPrefix:@"301"] || [ccnum hasPrefix:@"302"] || [ccnum hasPrefix:@"303"] || [ccnum hasPrefix:@"304"] || [ccnum hasPrefix:@"305"]) {
+            return PFDinersClubType;
+        }
+        if ([ccnum hasPrefix:@"34"] || [ccnum hasPrefix:@"37"]) {
+            return PFAmexType;
+        }
+        if ([ccnum hasPrefix:@"35"]) {
+            return PFJcbCardType;
+        }
 	}
 	else if ([ccnum hasPrefix:@"4"]) {
 		return PFVisaType;
@@ -259,6 +261,10 @@ done:
 			return @"Amex";
 		case PFDiscoverType:
 			return @"Discover";
+		case PFDinersClubType:
+			return @"Diners Club";
+		case PFJcbCardType:
+			return @"JCB";
 		default:
 			return nil;
 	}
@@ -269,11 +275,15 @@ done:
 - (BOOL)isMasterCard { return [self creditCardType] == PFMasterCardType; }
 - (BOOL)isAmexCard { return [self creditCardType] == PFAmexType; }
 - (BOOL)isDiscoverCard { return [self creditCardType] == PFDiscoverType; }
+- (BOOL)isDinersCard { return [self creditCardType] == PFDinersClubType; }
+- (BOOL)isJcbCard { return [self creditCardType] == PFJcbCardType; }
 
 + (NSSet *)keyPathsForValuesAffectingVisaCard { return [NSSet setWithObject:@"creditCardNumber"]; }
 + (NSSet *)keyPathsForValuesAffectingMasterCard { return [NSSet setWithObject:@"creditCardNumber"]; }
 + (NSSet *)keyPathsForValuesAffectingAmexCard { return [NSSet setWithObject:@"creditCardNumber"]; }
 + (NSSet *)keyPathsForValuesAffectingDiscoverCard { return [NSSet setWithObject:@"creditCardNumber"]; }
++ (NSSet *)keyPathsForValuesAffectingDinersCard { return [NSSet setWithObject:@"creditCardNumber"]; }
++ (NSSet *)keyPathsForValuesAffectingJcbCard { return [NSSet setWithObject:@"creditCardNumber"]; }
 
 #pragma mark -
 #pragma mark Accessors
@@ -371,7 +381,7 @@ done:
 	NSString *ccnum = [self p_cleanCreditCardNumber:*value];
 
 	// American Express is 15 digits and everything else is at least 16
-	if ([ccnum length] < 15 || [ccnum length] > 16) goto fail;
+	if ([ccnum length] < 13 || [ccnum length] > 16) goto fail;
 
 	NSInteger sum = 0;
 	BOOL alt = NO;

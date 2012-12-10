@@ -7,7 +7,6 @@
 //
 
 #import "PFAddress.h"
-#import <AddressBook/AddressBook.h>
 
 @implementation PFAddress
 
@@ -16,94 +15,28 @@
 	copy->firstName = [firstName copy];
 	copy->lastName = [lastName copy];
 	copy->company = [company copy];
-	copy->address1 = [address1 copy];
-	copy->address2 = [address2 copy];
-	copy->city = [city copy];
-	copy->state = [state copy];
-	copy->zipcode = [zipcode copy];
-	copy->countryCode = [countryCode copy];
 	copy->email = [email copy];
 	return copy;
 }
 
 
-- (void)fillUsingAddressBookAddressWithLabel:(NSString *)label {
-	ABPerson *me = [[ABAddressBook sharedAddressBook] me];
-
-	if (firstName == nil) [self setFirstName:[me valueForProperty:kABFirstNameProperty]];
-	if (lastName == nil) [self setLastName:[me valueForProperty:kABLastNameProperty]];
-	if (company == nil) [self setCompany:[me valueForProperty:kABOrganizationProperty]];
-
-	ABMultiValue *addresses = [me valueForProperty:kABAddressProperty];
-	id address = nil;
-
-	for (NSUInteger i = 0; i < [addresses count]; i++) {
-		if ([[addresses labelAtIndex:i] isEqual:label]) {
-			address = [addresses valueAtIndex:i];
-			break;
-		}
-	}
-
-	if (address == nil) {
-		address = [addresses valueForIdentifier:[addresses primaryIdentifier]];
-	}
-
-	if (address) {
-		[self setAddress1:[address valueForKey:kABAddressStreetKey]];
-		[self setAddress2:nil];
-		[self setCity:[address valueForKey:kABAddressCityKey]];
-		[self setState:[address valueForKey:kABAddressStateKey]];
-		[self setZipcode:[address valueForKey:kABAddressZIPKey]];
-
-		NSString *addressCountryCode = [[address valueForKey:kABAddressCountryCodeKey] uppercaseString];
-		NSString *addressCountry = [[address valueForKey:kABAddressCountryKey] uppercaseString];
-
-		if (addressCountryCode) {
-			[self setCountryCode:addressCountryCode];
-		}
-		else if (addressCountry) {
-			// There's no country code in the address. Look up the code by the country name instead.
-			// First check against the various ways of saying USA
-			if ([addressCountry isEqualToString:@"USA"] ||
-				[addressCountry isEqualToString:@"U.S.A."] ||
-				[addressCountry isEqualToString:@"UNITED STATES"] ||
-				[addressCountry isEqualToString:@"UNITED STATES OF AMERICA"]) {
-				[self setCountryCode:@"US"];
-			}
-			else {
-				// Check all the other countries
-				NSArray *countryDicts = [NSArray arrayWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"countries" ofType:@"plist"]];
-
-				for (NSDictionary *countryDict in countryDicts) {
-					if ([[[countryDict objectForKey:@"displayName"] uppercaseString] isEqualToString:addressCountry]) {
-						[self setCountryCode:[countryDict objectForKey:@"code"]];
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	ABMultiValue *emails = [me valueForProperty:kABEmailProperty];
-	for (NSUInteger i = 0; i < [emails count]; i++) {
-		if ([[emails labelAtIndex:i] isEqual:label]) {
-			[self setEmail:[emails valueAtIndex:i]];
-			break;
-		}
-	}
-
-	if (email == nil) {
-		[self setEmail:[emails valueForIdentifier:[emails primaryIdentifier]]];
-	}
-}
 
 - (void)fillUsingAddressBook {
-	ABPerson *me = [[ABAddressBook sharedAddressBook] me];
-
-	ABMultiValue *addresses = [me valueForProperty:kABAddressProperty];
-	NSString *defaultLabel = [addresses labelAtIndex:[addresses indexForIdentifier:[addresses primaryIdentifier]]];
-
-	[self fillUsingAddressBookAddressWithLabel:defaultLabel];
+    [self setFirstName:@""];
+    [self setLastName:@""];
+    NSString* fullName = NSFullUserName();
+    NSInteger firstSpaceLoc = fullName ? [fullName rangeOfString:@" "].location : NSNotFound;
+    if ((firstSpaceLoc != NSNotFound) && (firstSpaceLoc > 0)) {
+        NSInteger lastSpaceLoc = [fullName rangeOfString:@" " options:NSBackwardsSearch].location;
+        if ((lastSpaceLoc != NSNotFound) && (lastSpaceLoc < (NSInteger) [fullName length] - 1)) {
+            [self setFirstName:[fullName substringToIndex:firstSpaceLoc]];
+            [self setLastName:[fullName substringFromIndex:lastSpaceLoc+1]];
+        }
+    }
+    NSString* emailAddress = [[NSUserDefaults standardUserDefaults] objectForKey:@"GHEmailAddress"];
+    if (emailAddress) {
+        [self setEmail:emailAddress];
+    }
 }
 
 #pragma mark -
@@ -118,24 +51,6 @@
 - (NSString *)company { return company; }
 - (void)setCompany:(NSString *)value { if (company != value) {  company = [value copy]; } }
 
-- (NSString *)address1 { return address1; }
-- (void)setAddress1:(NSString *)value { if (address1 != value) {  address1 = [value copy]; } }
-
-- (NSString *)address2 { return address2; }
-- (void)setAddress2:(NSString *)value { if (address2 != value) {  address2 = [value copy]; } }
-
-- (NSString *)city { return city; }
-- (void)setCity:(NSString *)value { if (city != value) {  city = [value copy]; } }
-
-- (NSString *)state { return state; }
-- (void)setState:(NSString *)value { if (state != value) {  state = [value copy]; } }
-
-- (NSString *)zipcode { return zipcode; }
-- (void)setZipcode:(NSString *)value { if (zipcode != value) {  zipcode = [value copy]; } }
-
-- (NSString *)countryCode { return countryCode; }
-- (void)setCountryCode:(NSString *)value { if (countryCode != value) {  countryCode = [value copy]; } }
-
 - (NSString *)email { return email; }
 - (void)setEmail:(NSString *)value { if (email != value) {  email = [value copy]; } }
 
@@ -148,26 +63,6 @@
 }
 
 - (BOOL)validateLastName:(id *)value error:(NSError **)outError {
-	if (outError) *outError = nil;
-	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
-}
-
-- (BOOL)validateAddress1:(id *)value error:(NSError **)outError {
-	if (outError) *outError = nil;
-	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
-}
-
-- (BOOL)validateCity:(id *)value error:(NSError **)outError {
-	if (outError) *outError = nil;
-	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
-}
-
-- (BOOL)validateState:(id *)value error:(NSError **)outError {
-	if (outError) *outError = nil;
-	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
-}
-
-- (BOOL)validateZipcode:(id *)value error:(NSError **)outError {
 	if (outError) *outError = nil;
 	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
 }

@@ -11,8 +11,6 @@
 #import "PFBackgroundView.h"
 #import "PFCollectionRow.h"
 
-#import <AddressBook/AddressBook.h>
-
 @implementation PFStoreWindowController
 
 static PFStoreWindowController *gController = nil;
@@ -166,30 +164,12 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	[lockImageView setHidden:NO];
 
-	// If there's one or less addresses in address book, hide the address selection dropdown
-	if (addressSelectionContainerView != nil && [self p_countOfAddresses] <= 1) {
-		NSRect vframe = [billingView frame];
-		CGFloat diff = NSHeight([addressSelectionContainerView frame]);
-		vframe.size.height -= diff;
-		vframe.origin.y += diff;
-		[addressSelectionContainerView removeFromSuperview];
-		[billingView setFrame:vframe];
-		addressPopUpButton = nil;
-		addressSelectionContainerView = nil;
-	}
-	// Otherwise, populate the dropdown
-	else {
-		[self p_setupAddressPopUpButton];
-	}
-
 	[self p_setContentView:billingView];
 
 	// If name is blank, put focus there
 	if ([[firstNameField stringValue] length] == 0)
 		[[self window] makeFirstResponder:firstNameField];
 	// otherwise, if address is blank, put focus there
-	else if ([[address1Field stringValue] length] == 0)
-		[[self window] makeFirstResponder:address1Field];
 	// otherwise, if email is blank, put focus there
 	else if ([[emailField stringValue] length] == 0)
 		[[self window] makeFirstResponder:emailField];
@@ -251,20 +231,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 		exit(0);
 	else
 		[self close];
-}
-
-- (IBAction)selectAddress:(id)sender {
-	NSInteger index = [sender indexOfItem:[sender selectedItem]];
-
-	if (index < [self p_countOfAddresses]) {
-		NSString *label = [[[[ABAddressBook sharedAddressBook] me] valueForProperty:kABAddressProperty] labelAtIndex:index];
-		PFAddress *address = [[order billingAddress] copy];
-		[address fillUsingAddressBookAddressWithLabel:label];
-		[order setBillingAddress:address];
-	}
-	else if (customAddress) {
-		[order setBillingAddress:customAddress];
-	}
 }
 
 - (IBAction)selectCountry:(id)sender {
@@ -456,25 +422,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 #pragma mark -
 #pragma mark Private
 
-- (NSInteger)p_countOfAddresses {
-	ABMultiValue *addresses = [[[ABAddressBook sharedAddressBook] me] valueForProperty:kABAddressProperty];
-	return [addresses count];
-}
-
-- (void)p_setupAddressPopUpButton {
-	ABMultiValue *addresses = [[[ABAddressBook sharedAddressBook] me] valueForProperty:kABAddressProperty];
-
-	[addressPopUpButton removeAllItems];
-
-	for (NSUInteger i = 0; i < [addresses count]; i++) {
-		NSString *label = [addresses labelAtIndex:i];
-		[addressPopUpButton addItemWithTitle:ABLocalizedPropertyOrLabel(label)];
-	}
-
-	[addressPopUpButton setTarget:self];
-	[addressPopUpButton setAction:@selector(selectAddress:)];
-}
-
 - (void)p_setEnabled:(BOOL)enabled toAllControlsInView:(NSView *)view {
 	NSEnumerator *e = [[view subviews] objectEnumerator];
 	NSView *subview = nil;
@@ -515,10 +462,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	[firstNameLabel setTextColor:good];
 	[lastNameLabel setTextColor:good];
-	[address1Label setTextColor:good];
-	[cityLabel setTextColor:good];
-	[stateLabel setTextColor:good];
-	[zipcodeLabel setTextColor:good];
 	[emailLabel setTextColor:good];
 	[creditCardNumberLabel setTextColor:good];
 	[creditCardSecurityCodeLabel setTextColor:good];
@@ -535,26 +478,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	if (!(value = [billingAddress lastName]) || ![billingAddress validateValue:&value forKey:@"lastName" error:nil]) {
 		[lastNameLabel setTextColor:bad];
-		success = NO;
-	}
-
-	if (!(value = [billingAddress address1]) || ![billingAddress validateValue:&value forKey:@"address1" error:nil]) {
-		[address1Label setTextColor:bad];
-		success = NO;
-	}
-
-	if (!(value = [billingAddress city]) || ![billingAddress validateValue:&value forKey:@"city" error:nil]) {
-		[cityLabel setTextColor:bad];
-		success = NO;
-	}
-
-	if (!(value = [billingAddress state]) || ![billingAddress validateValue:&value forKey:@"state" error:nil]) {
-		[stateLabel setTextColor:bad];
-		success = NO;
-	}
-
-	if (!(value = [billingAddress zipcode]) || ![billingAddress validateValue:&value forKey:@"zipcode" error:nil]) {
-		[zipcodeLabel setTextColor:bad];
 		success = NO;
 	}
 
