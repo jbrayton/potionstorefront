@@ -14,7 +14,6 @@
 	PFAddress *copy = [[PFAddress alloc] init];
 	copy->firstName = [firstName copy];
 	copy->lastName = [lastName copy];
-	copy->company = [company copy];
 	copy->email = [email copy];
 	return copy;
 }
@@ -47,9 +46,6 @@
 
 - (NSString *)lastName { return lastName; }
 - (void)setLastName:(NSString *)value { if (lastName != value) {  lastName = [value copy]; } }
-
-- (NSString *)company { return company; }
-- (void)setCompany:(NSString *)value { if (company != value) {  company = [value copy]; } }
 
 - (NSString *)email { return email; }
 - (void)setEmail:(NSString *)value { if (email != value) {  email = [value copy]; } }

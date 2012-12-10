@@ -62,7 +62,6 @@
 		[orderDict setObject:[a firstName]	forKey:@"first_name"];
 		[orderDict setObject:[a lastName]	forKey:@"last_name"];
 		[orderDict setObject:[self licenseeName] forKey:@"licensee_name"];
-		if ([a company]) [orderDict setObject:[a company]	forKey:@"company"];
 		[orderDict setObject:[a email]		forKey:@"email"];
 		[orderDict setObject:creditCard		forKey:@"payment_type"];
 		[orderDict setObject:[self cleanedCreditCardNumber]			forKey:@"cc_number"];
@@ -210,10 +209,6 @@ fail:
             
             NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/noindex/store/processtransaction.php"]];
             args = [NSString stringWithFormat:@"token=%@&name=%@&email=%@&product=%@&quantity=%ld&totalPriceCents=%ld", tokenEncoded, nameEncoded, emailEncoded, product, quantity, totalPriceCents];
-            if ([[[self billingAddress] company] length]) {
-                NSString* companyEncoded = [self stringByUrlEncoding:[[self billingAddress] company]];
-                args = [args stringByAppendingFormat:@"&company=%@", companyEncoded];
-            }
             //if (couponCode) {
             //    args = [args stringByAppendingFormat:@"&couponCode=%@", couponCodeEncoded];
             //}
@@ -546,7 +541,7 @@ fail:
 - (void)p_prepareForSubmission {
 	// Trim all the string fields of the address
 	NSArray *keys = [NSArray arrayWithObjects:
-					 @"firstName", @"lastName", @"company", @"email",
+					 @"firstName", @"lastName", @"email",
 					 nil];
 	for (NSString *key in keys) {
 		NSString *trimmed = [[[self billingAddress] valueForKey:key] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];

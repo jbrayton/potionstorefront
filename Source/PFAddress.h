@@ -12,7 +12,6 @@
 @interface PFAddress : NSObject <NSCopying> {
 	NSString *firstName;
 	NSString *lastName;
-	NSString *company;
 	NSString *email;
 }
 
@@ -25,9 +24,6 @@
 
 - (NSString *)lastName;
 - (void)setLastName:(NSString *)value;
-
-- (NSString *)company;
-- (void)setCompany:(NSString *)value;
 
 - (NSString *)email;
 - (void)setEmail:(NSString *)value;
