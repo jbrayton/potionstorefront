@@ -36,6 +36,7 @@ enum {
 	IBOutlet NSProgressIndicator *productFetchProgressSpinner;
 	IBOutlet NSButton *creditCardButton;
 	IBOutlet NSButton *paypalOrGoogleCheckoutButton;
+    IBOutlet NSTextField* payWithLabel;
 
 	// STUFF FOR BILLING VIEW
 	IBOutlet NSView *billingView;
@@ -55,12 +56,6 @@ enum {
 	IBOutlet NSTextField *creditCardNumberField;
 	IBOutlet NSTextField *creditCardExpirationMonthField;
 	IBOutlet NSTextField *creditCardExpirationYearField;
-
-	// Pop up buttons
-	IBOutlet NSPopUpButton *countryPopUpButton;
-	IBOutlet NSPopUpButton *addressPopUpButton;
-
-	IBOutlet NSArrayController *countriesArrayController;
 
 	PFAddress *customAddress;
 

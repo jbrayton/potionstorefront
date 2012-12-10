@@ -15,8 +15,8 @@
 - (IBAction)buy:(id)sender {
 	[[PotionStorefront sharedStorefront] setDelegate:self];
 	[[PotionStorefront sharedStorefront] setPotionStoreURL:[NSURL URLWithString:@"https://localhost:3000/store"]];
-	[[PotionStorefront sharedStorefront] setProductsPlistURL:[NSURL URLWithString:@"http://www.potionfactory.com/files/thehitlist/store_products.plist"]];
-	[[PotionStorefront sharedStorefront] setWebStoreSupportsPayPal:YES googleCheckout:YES];
+	[[PotionStorefront sharedStorefront] setProductsPlistURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/noindex/store/cloudpullproductinfo.plist"]];
+	[[PotionStorefront sharedStorefront] setWebStoreSupportsPayPal:NO googleCheckout:NO];
 	[[PotionStorefront sharedStorefront] runModal];
 //	[[PotionStorefront sharedStorefront] beginSheetModalForWindow:mainWindow];
 }

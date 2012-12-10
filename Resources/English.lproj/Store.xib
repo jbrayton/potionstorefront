@@ -1001,7 +1001,7 @@
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
-					<object class="NSButton" id="15484583">
+					<object class="NSButton" id="54962918">
 						<reference key="NSNextResponder" ref="867003023"/>
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{279, 80}, {44, 28}}</string>
@@ -1009,19 +1009,19 @@
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="563812542"/>
 						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="857788994">
+						<object class="NSButtonCell" key="NSCell" id="183726124">
 							<int key="NSCellFlags">603979776</int>
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="139637021"/>
-							<reference key="NSControlView" ref="15484583"/>
+							<reference key="NSControlView" ref="54962918"/>
 							<int key="NSButtonFlags">138690560</int>
 							<int key="NSButtonFlags2">130</int>
-							<object class="NSCustomResource" key="NSNormalImage" id="256510171">
+							<object class="NSCustomResource" key="NSNormalImage" id="448827904">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">jcb</string>
 							</object>
-							<reference key="NSAlternateImage" ref="256510171"/>
+							<reference key="NSAlternateImage" ref="448827904"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
@@ -1029,27 +1029,27 @@
 						</object>
 						<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 					</object>
-					<object class="NSButton" id="382198995">
+					<object class="NSButton" id="919261681">
 						<reference key="NSNextResponder" ref="867003023"/>
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{232, 80}, {44, 28}}</string>
 						<reference key="NSSuperview" ref="867003023"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="15484583"/>
+						<reference key="NSNextKeyView" ref="54962918"/>
 						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="256588902">
+						<object class="NSButtonCell" key="NSCell" id="100578311">
 							<int key="NSCellFlags">603979776</int>
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="139637021"/>
-							<reference key="NSControlView" ref="382198995"/>
+							<reference key="NSControlView" ref="919261681"/>
 							<int key="NSButtonFlags">138690560</int>
 							<int key="NSButtonFlags2">130</int>
-							<object class="NSCustomResource" key="NSNormalImage" id="372413347">
+							<object class="NSCustomResource" key="NSNormalImage" id="1003402158">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">dinersclub</string>
 							</object>
-							<reference key="NSAlternateImage" ref="372413347"/>
+							<reference key="NSAlternateImage" ref="1003402158"/>
 							<string key="NSAlternateContents"/>
 							<string key="NSKeyEquivalent"/>
 							<int key="NSPeriodicDelay">400</int>
@@ -1063,7 +1063,7 @@
 						<string key="NSFrame">{{180, 81}, {44, 28}}</string>
 						<reference key="NSSuperview" ref="867003023"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="382198995"/>
+						<reference key="NSNextKeyView" ref="919261681"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="867031256">
 							<int key="NSCellFlags">603979776</int>
@@ -1536,6 +1536,14 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 						<reference key="destination" ref="989783362"/>
 					</object>
 					<int key="connectionID">555</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">payWithLabel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="246698861"/>
+					</object>
+					<int key="connectionID">585</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2091,10 +2099,10 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">enabled: order.dinersCard</string>
-						<reference key="source" ref="382198995"/>
+						<reference key="source" ref="919261681"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="382198995"/>
+							<reference key="NSSource" ref="919261681"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">enabled: order.dinersCard</string>
 							<string key="NSBinding">enabled</string>
@@ -2107,10 +2115,10 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">enabled: order.jcbCard</string>
-						<reference key="source" ref="15484583"/>
+						<reference key="source" ref="54962918"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="15484583"/>
+							<reference key="NSSource" ref="54962918"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">enabled: order.jcbCard</string>
 							<string key="NSBinding">enabled</string>
@@ -2288,8 +2296,8 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 							<reference ref="95016430"/>
 							<reference ref="304291276"/>
 							<reference ref="543460543"/>
-							<reference ref="382198995"/>
-							<reference ref="15484583"/>
+							<reference ref="919261681"/>
+							<reference ref="54962918"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Billing Information</string>
@@ -2851,31 +2859,31 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">576</int>
-						<reference key="object" ref="382198995"/>
+						<reference key="object" ref="919261681"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="256588902"/>
+							<reference ref="100578311"/>
 						</object>
 						<reference key="parent" ref="867003023"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">577</int>
-						<reference key="object" ref="256588902"/>
-						<reference key="parent" ref="382198995"/>
+						<reference key="object" ref="100578311"/>
+						<reference key="parent" ref="919261681"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">579</int>
-						<reference key="object" ref="15484583"/>
+						<reference key="object" ref="54962918"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="857788994"/>
+							<reference ref="183726124"/>
 						</object>
 						<reference key="parent" ref="867003023"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">580</int>
-						<reference key="object" ref="857788994"/>
-						<reference key="parent" ref="15484583"/>
+						<reference key="object" ref="183726124"/>
+						<reference key="parent" ref="54962918"/>
 					</object>
 				</object>
 			</object>
@@ -3190,7 +3198,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
-							<reference key="object" ref="382198995"/>
+							<reference key="object" ref="919261681"/>
 							<string key="toolTip">Diners Club</string>
 						</object>
 					</object>
@@ -3200,7 +3208,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 						<string key="NS.key.0">ToolTip</string>
 						<object class="IBToolTipAttribute" key="NS.object.0">
 							<string key="name">ToolTip</string>
-							<reference key="object" ref="15484583"/>
+							<reference key="object" ref="54962918"/>
 							<string key="toolTip">JCB</string>
 						</object>
 					</object>
@@ -3220,7 +3228,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">584</int>
+			<int key="maxID">585</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3413,6 +3421,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 							<string>lockImageView</string>
 							<string>mainContentView</string>
 							<string>orderTotalField</string>
+							<string>payWithLabel</string>
 							<string>paypalOrGoogleCheckoutButton</string>
 							<string>pricingView</string>
 							<string>primaryButton</string>
@@ -3447,6 +3456,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 							<string>NSTextField</string>
 							<string>NSImageView</string>
 							<string>PFBackgroundView</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSButton</string>
 							<string>NSView</string>
@@ -3486,6 +3496,7 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 							<string>lockImageView</string>
 							<string>mainContentView</string>
 							<string>orderTotalField</string>
+							<string>payWithLabel</string>
 							<string>paypalOrGoogleCheckoutButton</string>
 							<string>pricingView</string>
 							<string>primaryButton</string>
@@ -3588,6 +3599,10 @@ bCBiZSBhcnJpdmluZyBzaG9ydGx5IGJ5IGVtYWlsLg</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">orderTotalField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">payWithLabel</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">

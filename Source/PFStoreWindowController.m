@@ -50,8 +50,6 @@ static PFStoreWindowController *gController = nil;
 	 [[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedRed:25/255.0 green:36/255.0 blue:43/255.0 alpha:1.0]
 									endingColor:[NSColor colorWithCalibratedRed:25/255.0 green:31/255.0 blue:38/255.0 alpha:1.0]]];
 
-	NSArray *countries = [NSArray arrayWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"countries" ofType:@"plist"]];
-	[countriesArrayController setContent:countries];
 }
 
 static void PFUnbindEverythingInViewTree(NSView *view) {
@@ -312,8 +310,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	// Only add the custom address item once
 	if (customAddress == nil) {
-		[addressPopUpButton addItemWithTitle:NSLocalizedString(@"other", nil)];
-		[addressPopUpButton selectItemAtIndex:[addressPopUpButton numberOfItems] - 1];
 
 		customAddress = [[order billingAddress] copy];
 		[order setBillingAddress:customAddress];
@@ -322,7 +318,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 		customAddress = [[order billingAddress] copy];
 		[order setBillingAddress:customAddress];
 		// Select the custom address in the pop up
-		[addressPopUpButton selectItemAtIndex:[addressPopUpButton numberOfItems] - 1];
 	}
 }
 
@@ -409,6 +404,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	else {
 		[creditCardButton setHidden:YES];
 		[paypalOrGoogleCheckoutButton setHidden:YES];
+        [payWithLabel setHidden:YES];
 	}
 
 	// Size the button
