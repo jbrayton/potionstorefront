@@ -107,17 +107,10 @@ static NSError *ErrorWithObject(id object) {
 }
 
 static NSError *ErrorWithJSONResponse(NSString *string) {
-	NSArray *array = [string objectFromJSONString];
-	if ([array isKindOfClass:[NSArray class]] == NO) goto fail;
+	NSDictionary* dict = [string objectFromJSONString];
+	if ([dict isKindOfClass:[NSDictionary class]] == NO) goto fail;
 	@try {
-		NSMutableArray *messages = [NSMutableArray array];
-		for (NSString *msg in array) {
-			if (![msg hasSuffix:@"."] && ![msg hasSuffix:@"?"] && ![msg hasSuffix:@"!"])
-				[messages addObject:[msg stringByAppendingString:@"."]];
-			else
-				[messages addObject:msg];
-		}
-		return ErrorWithObject([messages componentsJoinedByString:@" "]);
+		return dict[@"message"];
 	}
 	@catch (NSException * e) {
 		NSLog(@"ERROR -- Got exception while trying to parse JSON error response: %@", e);
@@ -191,7 +184,10 @@ fail:
                 errorMessage = NSLocalizedString(@"Unable to process the response.", @"");
             }
             
-            if (errorMessage) {
+            if ([errorMessage length]) {
+                if ([errorMessage characterAtIndex:[errorMessage length]-1] != '.') {
+                    errorMessage = [errorMessage stringByAppendingString:@"."];
+                }
                 errorMessage = [errorMessage stringByAppendingString:@" Your credit card was not charged."];
                 NSError* error = ErrorWithObject(errorMessage);
                 NSDictionary* info = @{ @"order": self, @"error": error } ;
@@ -255,7 +251,7 @@ fail:
 				if (licensedCount == 0)
 					error = ErrorWithObject(NSLocalizedString(@"The order was charged, but a license key was not received. Please email us at support@goldenhillsoftware.com", nil));
 			} else {
-				error = ErrorWithJSONResponse(errorMessage);
+				error = ErrorWithObject(errorMessage);
 			}
 		} @catch (NSException *e) {
 			NSLog(@"ERROR -- Exception while submitting order: %@", e);

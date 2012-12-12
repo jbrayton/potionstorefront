@@ -100,6 +100,11 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 #pragma mark Actions
 
 - (IBAction)showPricing:(id)sender {
+    if ([[productCollectionView content] count] == 0) {
+        [productFetchProgressSpinner startAnimation:self];
+        [PFProduct beginFetchingProductsFromURL:productsPlistURL delegate:self];
+    }
+
 	// Don't validate email and credit card number right away when going from billing information to pricing
 	validateFieldsImmediately = NO;
 
@@ -343,11 +348,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	if (productsPlistURL != value) {
 		productsPlistURL = [value copy];
 
-		// Grab products from server if we haven't yet
-		if ([[productCollectionView content] count] == 0) {
-			[productFetchProgressSpinner startAnimation:self];
-			[PFProduct beginFetchingProductsFromURL:productsPlistURL delegate:self];
-		}
 	}
 }
 
