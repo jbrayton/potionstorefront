@@ -36,7 +36,10 @@ static PFStoreWindowController *gController = nil;
 - (void)awakeFromNib {
 	[[self window] setDelegate:(id)self];
 
-	[headerTitleField setTextColor:[NSColor colorWithCalibratedRed:201/255.0 green:220/255.0 blue:255/255.0 alpha:1.0]];
+    NSString* appName = [[NSBundle mainBundle] infoDictionary][@"CFBundleName"];
+    [[self window] setTitle:[NSString stringWithFormat:NSLocalizedString(@"Purchase %@", @""), appName]];
+	
+    [headerTitleField setTextColor:[NSColor colorWithCalibratedRed:201/255.0 green:220/255.0 blue:255/255.0 alpha:1.0]];
 	[headerStepsField setTextColor:[NSColor colorWithCalibratedRed:201/255.0 green:220/255.0 blue:255/255.0 alpha:1.0]];
 
 	// Default kerning on Helvetica Neue UltraLight is too small
@@ -91,14 +94,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	else {
 		[NSApp endSheet:[self window] returnCode:NSCancelButton];
 	}
-
-	// Unbind everything so that circular retain cycles are released and everything can get deallocated
-	PFUnbindEverythingInViewTree([[self window] contentView]);
-	PFUnbindEverythingInViewTree(pricingView);
-	PFUnbindEverythingInViewTree(billingView);
-	PFUnbindEverythingInViewTree(thankYouView);
-
-	gController = nil;
 }
 
 #pragma mark -
@@ -118,7 +113,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	[secondaryButton setAction:@selector(cancel:)];
 
 	if ([[self delegate] respondsToSelector:@selector(showRegistrationWindow:)]) {
-		[tertiaryButton setTitle:NSLocalizedString(@"Unlock with License Key...", nil)];
+		[tertiaryButton setTitle:NSLocalizedString(@"Unlock with Registration Code...", nil)];
 		[tertiaryButton setAction:@selector(showRegistrationWindow:)];
 		[tertiaryButton setTarget:self];
 		[tertiaryButton setHidden:NO];
@@ -187,18 +182,14 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 	[lockImageView setHidden:YES];
 
+    NSString* appName = [[NSBundle mainBundle] infoDictionary][@"CFBundleName"];
+    [thankYouLabel setStringValue:[NSString stringWithFormat:NSLocalizedString(@"Thank you! %@ is now fully functional and all trial limitations have been removed. Your purchase receipt and registration code will arrive shortly by email.", @""), appName]];
+
 	[self p_setContentView:thankYouView];
 }
 
 - (IBAction)selectPaymentMethod:(id)sender {
-	if (sender == creditCardButton) {
-		paymentMethod = PFCreditCardPaymentMethod;
-		[paypalOrGoogleCheckoutButton setState:NSOffState];
-	}
-	else {
-		paymentMethod = PFWebStorePaymentMethod;
-		[creditCardButton setState:NSOffState];
-	}
+    paymentMethod = PFCreditCardPaymentMethod;
 }
 
 - (IBAction)updatedOrderLineItems:(id)sender {
@@ -321,37 +312,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	}
 }
 
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
-	if (!validateFieldsImmediately) return YES;
-
-	// It would be nice to validate in control:isValidObject:, but I can't figure out how to customize
-	// the error message there
-
-	// Validate the credit card number right away
-	if (control == creditCardNumberField) {
-		NSString *ccnum = [creditCardNumberField stringValue];
-		if ([ccnum length] != 0) {
-			NSError *error = nil;
-			if (![order validateValue:&ccnum forKey:@"creditCardNumber" error:&error]) {
-				[[self window] presentError:error modalForWindow:[self window] delegate:nil didPresentSelector:nil contextInfo:NULL];
-				return NO;
-			}
-		}
-	}
-	else if (control == emailField) {
-		NSString *email = [emailField stringValue];
-		if ([email length] != 0) {
-			NSError *error = nil;
-			if (![[order billingAddress] validateValue:&email forKey:@"email" error:&error]) {
-				[[self window] presentError:error modalForWindow:[self window] delegate:nil didPresentSelector:nil contextInfo:NULL];
-				return NO;
-			}
-		}
-	}
-
-	return YES;
-}
-
 #pragma mark Outline View Delegate
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
@@ -392,23 +352,6 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 }
 
 - (void)setWebStoreSupportsPayPal:(BOOL)paypal googleCheckout:(BOOL)gc {
-	if (paypal && gc) {
-		[paypalOrGoogleCheckoutButton setTitle:NSLocalizedString(@"PayPal or Google Checkout", nil)];
-	}
-	else if (paypal) {
-		[paypalOrGoogleCheckoutButton setTitle:NSLocalizedString(@"PayPal", nil)];
-	}
-	else if (gc) {
-		[paypalOrGoogleCheckoutButton setTitle:NSLocalizedString(@"Google Checkout", nil)];
-	}
-	else {
-		[creditCardButton setHidden:YES];
-		[paypalOrGoogleCheckoutButton setHidden:YES];
-        [payWithLabel setHidden:YES];
-	}
-
-	// Size the button
-	[paypalOrGoogleCheckoutButton sizeToFit];
 }
 
 - (void)setCancelButtonQuits:(BOOL)flag {

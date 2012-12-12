@@ -36,6 +36,8 @@
 - (void)beginSheetModalForWindow:(NSWindow *)window;
 
 - (void)runModal;
+- (void)showWindow;
+- (void)closeWindow;
 @end
 
 

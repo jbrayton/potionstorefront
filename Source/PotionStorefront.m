@@ -101,4 +101,29 @@ static PotionStorefront *gStorefront = nil;
 	[NSApp runModalForWindow:storeWindow];
 }
 
+- (void)showWindow {
+	NSWindow *storeWindow = [[PFStoreWindowController sharedController] window];
+    
+	// Don't open twice
+	if ([storeWindow isVisible]) {
+		[storeWindow makeKeyAndOrderFront:self];
+		return;
+	}
+    
+	// Call the showPricing: action here because by now the delegate should be set
+	[[PFStoreWindowController sharedController] showPricing:nil];
+    
+	// Center and open the window first
+	[storeWindow center];
+	[storeWindow makeKeyAndOrderFront:self];
+    
+	// Clear the first responder. By default it's getting set to the web store button, and that looks quite fugly
+	[storeWindow makeFirstResponder:nil];
+}
+
+- (void)closeWindow {
+    PFStoreWindowController* controller = [PFStoreWindowController sharedController];
+    [controller close];
+}
+
 @end

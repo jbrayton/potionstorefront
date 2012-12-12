@@ -34,9 +34,6 @@ enum {
 	IBOutlet NSCollectionView *productCollectionView;
 	IBOutlet NSTextField *orderTotalField;
 	IBOutlet NSProgressIndicator *productFetchProgressSpinner;
-	IBOutlet NSButton *creditCardButton;
-	IBOutlet NSButton *paypalOrGoogleCheckoutButton;
-    IBOutlet NSTextField* payWithLabel;
 
 	// STUFF FOR BILLING VIEW
 	IBOutlet NSView *billingView;
@@ -49,6 +46,7 @@ enum {
 	IBOutlet NSTextField *creditCardNumberLabel;
 	IBOutlet NSTextField *creditCardSecurityCodeLabel;
 	IBOutlet NSTextField *creditCardExpirationLabel;
+    IBOutlet NSTextField *thankYouLabel;
 
 	// Input Fields
 	IBOutlet NSTextField *firstNameField;
