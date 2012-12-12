@@ -1,35 +1,8 @@
 PotionStorefront
 --------------------------
 
-PotionStorefront is a Cocoa framework that lets users buy software
-from within a Mac application. It collects order information
-and sends it off to [Potion Store](http://www.potionfactory.com/potionstore)
-for final processing.
+This is my fork of [Potion Storefront](https://github.com/potionfactory/potionstorefront), a great way to allow customers to purchase your app right from within the app.
 
+I made a bunch of customizations that may not be useful to other developers, but feel free to take what you want.  Perhaps most importantly, I am not using the Potion Store; I have my own script that processes the purchase via Stripe.  I think most of my changes could be applied to any store -- although this fork has a link directly to my web-based store that other developers probably do not want.
 
-Features
---------
-
-- Fetches latest pricing from a plist file on the web
-- Autofill billing address using data from the Address Book
-- Auto-detect credit card type as the user types in the credit card number
-- Localside credit card number verification using the Luhn algorithm
-
-
-Usage:
-------
-
-- After cloning from GitHub, make sure to run "git submodule init" and "git submodule update"
-  to fetch JSONKit.
-- Example product data file: http://www.potionfactory.com/files/thehitlist/store_products.plist
-- Look at AppDelegate.m to see example usage.
-- The delegate object needs to implement the following method to be notified
-  of when the order completes successfully:
-
-    - (void)orderDidFinishCharging:(PFOrder *)order;
-
-
-Requirements
-------------
-
-- Mac OS X 10.5
+Thanks to the [Potion Storefront](https://github.com/potionfactory/potionstorefront) project for this great framework.
