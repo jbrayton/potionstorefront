@@ -36,6 +36,27 @@
     if (emailAddress) {
         [self setEmail:emailAddress];
     }
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:@"GHEmailAddress"
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+}
+
+- (void) observeValueForKeyPath:(NSString *) keyPath ofObject:(id)
+object
+                         change:(NSDictionary *) change context:(void *) context
+{
+    //was one of the selectedView buttons pressed?
+    if([keyPath isEqual:@"GHEmailAddress"]) {
+        NSString* emailAddress = [[NSUserDefaults standardUserDefaults] objectForKey:@"GHEmailAddress"];
+        if (emailAddress) {
+            [self setEmail:emailAddress];
+        }
+    }
+}
+
+- (void) dealloc {
+    [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"GHEmailAddress"];
 }
 
 #pragma mark -
