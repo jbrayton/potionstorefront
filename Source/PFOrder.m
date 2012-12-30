@@ -59,9 +59,7 @@
 	@try {
 		// This should give no trouble by the time we're here since everything
 		// should be validated already. Putting it inside @try just in case though.
-		[orderDict setObject:[a firstName]	forKey:@"first_name"];
-		[orderDict setObject:[a lastName]	forKey:@"last_name"];
-		[orderDict setObject:[self licenseeName] forKey:@"licensee_name"];
+		[orderDict setObject:[a name]	forKey:@"name"];
 		[orderDict setObject:[a email]		forKey:@"email"];
 		[orderDict setObject:creditCard		forKey:@"payment_type"];
 		[orderDict setObject:[self cleanedCreditCardNumber]			forKey:@"cc_number"];
@@ -144,10 +142,6 @@ fail:
         NSHTTPURLResponse *response = nil;
 
 		@try {
-			if ([self submitURL] == nil) {
-				NSLog(@"ERROR -- Cannot submit order without a URL");
-				return;
-			}
             
             NSString* cardNumber = [self creditCardNumber];
             cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -197,13 +191,13 @@ fail:
             
             
             NSString* tokenEncoded = [self stringByUrlEncoding:token];
-            NSString* nameEncoded = [self stringByUrlEncoding:[NSString stringWithFormat:@"%@ %@", [[self billingAddress] firstName], [[self billingAddress] lastName]]];
+            NSString* nameEncoded = [self stringByUrlEncoding:[[self billingAddress] name]];
             NSString* emailEncoded = [self stringByUrlEncoding:[[self billingAddress] email]];
             NSNumber* product = [[self lineItems][0] identifierNumber];
             NSInteger quantity = 1;
             NSInteger totalPriceCents = [self totalPriceCents];
             
-            NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/noindex/store/processtransaction.php"]];
+            NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/store/processtransaction.php"]];
             args = [NSString stringWithFormat:@"token=%@&name=%@&email=%@&product=%@&quantity=%ld&totalPriceCents=%ld", tokenEncoded, nameEncoded, emailEncoded, product, quantity, totalPriceCents];
             //if (couponCode) {
             //    args = [args stringByAppendingFormat:@"&couponCode=%@", couponCodeEncoded];
@@ -394,8 +388,6 @@ done:
 - (NSURL *)submitURL { return submitURL; }
 - (void)setSubmitURL:(NSURL *)value { if (submitURL != value) {  submitURL = [value copy]; } }
 
-// Just return the name from the address
-- (NSString *)licenseeName { return [NSString stringWithFormat:@"%@ %@", [[self billingAddress] firstName], [[self billingAddress] lastName]]; }
 
 - (PFAddress *)billingAddress { return billingAddress; }
 - (void)setBillingAddress:(PFAddress *)value { if (billingAddress != value) {  billingAddress = value; } }
@@ -537,7 +529,7 @@ fail:
 - (void)p_prepareForSubmission {
 	// Trim all the string fields of the address
 	NSArray *keys = [NSArray arrayWithObjects:
-					 @"firstName", @"lastName", @"email",
+					 @"name", @"email",
 					 nil];
 	for (NSString *key in keys) {
 		NSString *trimmed = [[[self billingAddress] valueForKey:key] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];

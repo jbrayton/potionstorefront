@@ -165,8 +165,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	[self p_setContentView:billingView];
 
 	// If name is blank, put focus there
-	if ([[firstNameField stringValue] length] == 0)
-		[[self window] makeFirstResponder:firstNameField];
+	if ([[nameField stringValue] length] == 0)
+		[[self window] makeFirstResponder:nameField];
 	// otherwise, if address is blank, put focus there
 	// otherwise, if email is blank, put focus there
 	else if ([[emailField stringValue] length] == 0)
@@ -404,8 +404,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	NSColor *good = [NSColor controlTextColor];
 	NSColor *bad = [[NSColor redColor] shadowWithLevel:0.15];
 
-	[firstNameLabel setTextColor:good];
-	[lastNameLabel setTextColor:good];
+	[nameLabel setTextColor:good];
 	[emailLabel setTextColor:good];
 	[creditCardNumberLabel setTextColor:good];
 	[creditCardSecurityCodeLabel setTextColor:good];
@@ -415,13 +414,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	NSError *error = nil;
 	PFAddress *billingAddress = [order billingAddress];
 
-	if (!(value = [billingAddress firstName]) || ![billingAddress validateValue:&value forKey:@"firstName" error:nil]) {
-		[firstNameLabel setTextColor:bad];
-		success = NO;
-	}
-
-	if (!(value = [billingAddress lastName]) || ![billingAddress validateValue:&value forKey:@"lastName" error:nil]) {
-		[lastNameLabel setTextColor:bad];
+	if (!(value = [billingAddress name]) || ![billingAddress validateValue:&value forKey:@"name" error:nil]) {
+		[nameLabel setTextColor:bad];
 		success = NO;
 	}
 

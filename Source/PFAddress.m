@@ -12,8 +12,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
 	PFAddress *copy = [[PFAddress alloc] init];
-	copy->firstName = [firstName copy];
-	copy->lastName = [lastName copy];
+	copy->name = [name copy];
 	copy->email = [email copy];
 	return copy;
 }
@@ -21,16 +20,10 @@
 
 
 - (void)fillUsingAddressBook {
-    [self setFirstName:@""];
-    [self setLastName:@""];
+    [self setName:@""];
     NSString* fullName = NSFullUserName();
-    NSInteger firstSpaceLoc = fullName ? [fullName rangeOfString:@" "].location : NSNotFound;
-    if ((firstSpaceLoc != NSNotFound) && (firstSpaceLoc > 0)) {
-        NSInteger lastSpaceLoc = [fullName rangeOfString:@" " options:NSBackwardsSearch].location;
-        if ((lastSpaceLoc != NSNotFound) && (lastSpaceLoc < (NSInteger) [fullName length] - 1)) {
-            [self setFirstName:[fullName substringToIndex:firstSpaceLoc]];
-            [self setLastName:[fullName substringFromIndex:lastSpaceLoc+1]];
-        }
+    if (fullName) {
+        [self setName:fullName];
     }
     NSString* emailAddress = [[NSUserDefaults standardUserDefaults] objectForKey:@"GHEmailAddress"];
     if (emailAddress) {
@@ -62,11 +55,8 @@ object
 #pragma mark -
 #pragma mark Accessors
 
-- (NSString *)firstName { return firstName; }
-- (void)setFirstName:(NSString *)value { if (firstName != value) {  firstName = [value copy]; } }
-
-- (NSString *)lastName { return lastName; }
-- (void)setLastName:(NSString *)value { if (lastName != value) {  lastName = [value copy]; } }
+- (NSString *)name { return name; }
+- (void)setName:(NSString *)value { if (name != value) {  name = [value copy]; } }
 
 - (NSString *)email { return email; }
 - (void)setEmail:(NSString *)value { if (email != value) {  email = [value copy]; } }
@@ -74,12 +64,7 @@ object
 #pragma mark -
 #pragma mark Validation
 
-- (BOOL)validateFirstName:(id *)value error:(NSError **)outError {
-	if (outError) *outError = nil;
-	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
-}
-
-- (BOOL)validateLastName:(id *)value error:(NSError **)outError {
+- (BOOL)validateName:(id *)value error:(NSError **)outError {
 	if (outError) *outError = nil;
 	return [[*value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] != 0;
 }

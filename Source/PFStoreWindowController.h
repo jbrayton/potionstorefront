@@ -40,8 +40,7 @@ enum {
 	IBOutlet NSView *addressSelectionContainerView;
 
 	// Labels
-	IBOutlet NSTextField *firstNameLabel;
-	IBOutlet NSTextField *lastNameLabel;
+	IBOutlet NSTextField *nameLabel;
 	IBOutlet NSTextField *emailLabel;
 	IBOutlet NSTextField *creditCardNumberLabel;
 	IBOutlet NSTextField *creditCardSecurityCodeLabel;
@@ -49,7 +48,7 @@ enum {
     IBOutlet NSTextField *thankYouLabel;
 
 	// Input Fields
-	IBOutlet NSTextField *firstNameField;
+	IBOutlet NSTextField *nameField;
 	IBOutlet NSTextField *emailField;
 	IBOutlet NSTextField *creditCardNumberField;
 	IBOutlet NSTextField *creditCardExpirationMonthField;

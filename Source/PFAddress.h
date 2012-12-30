@@ -10,8 +10,7 @@
 
 
 @interface PFAddress : NSObject <NSCopying> {
-	NSString *firstName;
-	NSString *lastName;
+	NSString *name;
 	NSString *email;
 }
 
@@ -19,11 +18,8 @@
 
 #pragma mark Accessors
 
-- (NSString *)firstName;
-- (void)setFirstName:(NSString *)value;
-
-- (NSString *)lastName;
-- (void)setLastName:(NSString *)value;
+- (NSString *)name;
+- (void)setName:(NSString *)value;
 
 - (NSString *)email;
 - (void)setEmail:(NSString *)value;
