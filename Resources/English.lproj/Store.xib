@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">12C3006</string>
-		<string key="IBDocument.InterfaceBuilderVersion">2844</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">2844</string>
+			<string key="NS.object.0">3084</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -408,7 +408,6 @@
 															<object class="NSArray" key="dict.sortedKeys">
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<string>NSFont</string>
-																<string>NSOriginalFont</string>
 																<string>NSParagraphStyle</string>
 															</object>
 															<object class="NSArray" key="dict.values">
@@ -416,11 +415,6 @@
 																<object class="NSFont" id="158744703">
 																	<string key="NSName">Helvetica</string>
 																	<double key="NSSize">11.5</double>
-																	<int key="NSfFlags">16</int>
-																</object>
-																<object class="NSFont" id="1001215183">
-																	<string key="NSName">Helvetica</string>
-																	<double key="NSSize">11</double>
 																	<int key="NSfFlags">16</int>
 																</object>
 																<object class="NSParagraphStyle" id="211653431">
@@ -473,7 +467,6 @@
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<string>NSFont</string>
 																<string>NSLink</string>
-																<string>NSOriginalFont</string>
 																<string>NSParagraphStyle</string>
 															</object>
 															<object class="NSArray" key="dict.values">
@@ -481,9 +474,8 @@
 																<reference ref="158744703"/>
 																<object class="NSURL">
 																	<nil key="NS.base"/>
-																	<string key="NS.relative">http://www.goldenhillsoftware.com/store</string>
+																	<string key="NS.relative">https://secure.goldenhillsoftware.com/store/</string>
 																</object>
-																<reference ref="1001215183"/>
 																<reference ref="211653431"/>
 															</object>
 														</object>
@@ -3364,7 +3356,6 @@ wGw</bytes>
 							<string>cancel:</string>
 							<string>openWebStore:</string>
 							<string>purchase:</string>
-							<string>selectCountry:</string>
 							<string>selectPaymentMethod:</string>
 							<string>showBillingInformation:</string>
 							<string>showPricing:</string>
@@ -3383,7 +3374,6 @@ wGw</bytes>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
-							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -3393,7 +3383,6 @@ wGw</bytes>
 							<string>cancel:</string>
 							<string>openWebStore:</string>
 							<string>purchase:</string>
-							<string>selectCountry:</string>
 							<string>selectPaymentMethod:</string>
 							<string>showBillingInformation:</string>
 							<string>showPricing:</string>
@@ -3413,10 +3402,6 @@ wGw</bytes>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">purchase:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">selectCountry:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
