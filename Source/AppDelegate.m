@@ -18,7 +18,8 @@
 	[[PotionStorefront sharedStorefront] setProductsPlistURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/store/cloudpullproductinfo.plist"]];
 	[[PotionStorefront sharedStorefront] setWebStoreSupportsPayPal:NO googleCheckout:NO];
     [[PotionStorefront sharedStorefront] setStripePublishableKey:@"pk_0JwHjZIfVZeGkFZMLqbkKLzsrkUXB"];
-	[[PotionStorefront sharedStorefront] runModal];
+    [[PotionStorefront sharedStorefront] showWindow];
+	//[[PotionStorefront sharedStorefront] runModal];
 //	[[PotionStorefront sharedStorefront] beginSheetModalForWindow:mainWindow];
 }
 

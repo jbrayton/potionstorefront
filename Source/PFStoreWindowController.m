@@ -88,11 +88,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 }
 
 - (void)windowWillClose:(NSNotification *)notification {
-	if ([NSApp modalWindow] == [self window]) {
-		[NSApp stopModal];
-	}
-	else {
-		[NSApp endSheet:[self window] returnCode:NSCancelButton];
+	if ([notification object] == [self window]) {
+		gController = nil;
 	}
 }
 
