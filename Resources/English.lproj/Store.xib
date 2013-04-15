@@ -852,7 +852,7 @@ wGw</bytes>
 					<object class="NSTextField" id="280468815">
 						<reference key="NSNextResponder" ref="691983328"/>
 						<int key="NSvFlags">-2147483359</int>
-						<string key="NSFrame">{{330, 20}, {157, 23}}</string>
+						<string key="NSFrame">{{330, 19}, {157, 23}}</string>
 						<reference key="NSSuperview" ref="691983328"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>

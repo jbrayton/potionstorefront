@@ -89,7 +89,7 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 
 - (void)windowWillClose:(NSNotification *)notification {
 	if ([notification object] == [self window]) {
-		gController = nil;
+		//gController = nil;
 	}
 }
 
@@ -97,10 +97,14 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 #pragma mark Actions
 
 - (IBAction)showPricing:(id)sender {
-    if ([[productCollectionView content] count] == 0) {
+    //if ([[productCollectionView content] count] == 0) {
+        [order setLineItems:@[]];
+        [productCollectionView setContent:@[]];
+        [orderTotalField setHidden:YES];
+        [primaryButton setEnabled:NO];
         [productFetchProgressSpinner startAnimation:self];
         [PFProduct beginFetchingProductsFromURL:productsPlistURL delegate:self];
-    }
+    //}
 
 	// Don't validate email and credit card number right away when going from billing information to pricing
 	validateFieldsImmediately = NO;
@@ -277,7 +281,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 			[[self delegate] orderDidFinishCharging:anOrder];
 		}
 
-		[self showThankYou:self];
+//		[self showThankYou:self];
+        [self close];
 	}
 	else {
 		[[self window] presentError:error modalForWindow:[self window] delegate:self didPresentSelector:@selector(didPresentOrderSubmitError:) contextInfo:NULL];
