@@ -52,19 +52,11 @@
 		A1A11E7D0E3EE5D700F0C6E4 /* PFLockImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A11E7B0E3EE5D700F0C6E4 /* PFLockImageView.h */; };
 		A1A11E7E0E3EE5D700F0C6E4 /* PFLockImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A11E7C0E3EE5D700F0C6E4 /* PFLockImageView.m */; };
 		A1A11EB80E3EF7E700F0C6E4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1A11EB70E3EF7E700F0C6E4 /* QuartzCore.framework */; };
-		A1DA2ED2134FAE4C00A21642 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DA2ED0134FAE4C00A21642 /* JSONKit.h */; };
-		A1E56BB5134FE5C900C75FF9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E56BB3134FE5C900C75FF9 /* InfoPlist.strings */; };
 		A1E56BBD134FE5C900C75FF9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E56BAE134FE5C900C75FF9 /* Cocoa.framework */; };
-		A1E56BC0134FE5C900C75FF9 /* JSONKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E56BAD134FE5C900C75FF9 /* JSONKit.framework */; };
 		A1E56BC6134FE5C900C75FF9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1E56BC4134FE5C900C75FF9 /* InfoPlist.strings */; };
 		A1E56BC9134FE5C900C75FF9 /* JSONKitTests.h in Resources */ = {isa = PBXBuildFile; fileRef = A1E56BC8134FE5C900C75FF9 /* JSONKitTests.h */; };
 		A1E56BCB134FE5C900C75FF9 /* JSONKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E56BCA134FE5C900C75FF9 /* JSONKitTests.m */; };
-		A1E56BD2134FE5F400C75FF9 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = A1DA2ED1134FAE4C00A21642 /* JSONKit.m */; };
-		A1E56BD3134FE5F700C75FF9 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = A1DA2ED1134FAE4C00A21642 /* JSONKit.m */; };
-		A1E56BD4134FE6CC00C75FF9 /* JSONKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A1E56BAD134FE5C900C75FF9 /* JSONKit.framework */; };
-		A1E56BDF13501B0700C75FF9 /* JSONKit.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DA2ED0134FAE4C00A21642 /* JSONKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A1E56BE0135020AC00C75FF9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E56BAE134FE5C900C75FF9 /* Cocoa.framework */; };
-		A1E56BE4135021F800C75FF9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E56BE3135021F800C75FF9 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,20 +73,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = A154EF740E3BE81F002973AE;
 			remoteInfo = PotionStorefront;
-		};
-		A1E56BBE134FE5C900C75FF9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A1E56BAC134FE5C900C75FF9;
-			remoteInfo = JSONKit;
-		};
-		A1E56BE11350218700C75FF9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A1E56BAC134FE5C900C75FF9;
-			remoteInfo = JSONKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -116,7 +94,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A1E56BD4134FE6CC00C75FF9 /* JSONKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -178,13 +155,7 @@
 		A1A11E7B0E3EE5D700F0C6E4 /* PFLockImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFLockImageView.h; sourceTree = "<group>"; };
 		A1A11E7C0E3EE5D700F0C6E4 /* PFLockImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFLockImageView.m; sourceTree = "<group>"; };
 		A1A11EB70E3EF7E700F0C6E4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
-		A1DA2ED0134FAE4C00A21642 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = Externals/JSONKit/JSONKit.h; sourceTree = SOURCE_ROOT; };
-		A1DA2ED1134FAE4C00A21642 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = Externals/JSONKit/JSONKit.m; sourceTree = SOURCE_ROOT; };
-		A1E56BAD134FE5C900C75FF9 /* JSONKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1E56BAE134FE5C900C75FF9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		A1E56BB2134FE5C900C75FF9 /* JSONKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JSONKit-Info.plist"; sourceTree = "<group>"; };
-		A1E56BB4134FE5C900C75FF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		A1E56BB6134FE5C900C75FF9 /* JSONKit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JSONKit-Prefix.pch"; sourceTree = "<group>"; };
 		A1E56BBC134FE5C900C75FF9 /* JSONKitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONKitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1E56BC3134FE5C900C75FF9 /* JSONKitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JSONKitTests-Info.plist"; sourceTree = "<group>"; };
 		A1E56BC5134FE5C900C75FF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -220,20 +191,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A1E56BA9134FE5C900C75FF9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1E56BE4135021F800C75FF9 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A1E56BB8134FE5C900C75FF9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A1E56BBD134FE5C900C75FF9 /* Cocoa.framework in Frameworks */,
-				A1E56BC0134FE5C900C75FF9 /* JSONKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,7 +218,6 @@
 				A154EF750E3BE81F002973AE /* PotionStorefront.framework */,
 				8D1107320486CEB800E47090 /* TestApp.app */,
 				A10333670E32CEF800230ABD /* Tests.octest */,
-				A1E56BAD134FE5C900C75FF9 /* JSONKit.framework */,
 				A1E56BBC134FE5C900C75FF9 /* JSONKitTests.octest */,
 			);
 			name = Products;
@@ -268,7 +229,6 @@
 				A15EC4F90F958A440074DCFC /* README.markdown */,
 				A15EC4FC0F9592AD0074DCFC /* LICENSE */,
 				A154EF800E3BE916002973AE /* PotionStorefront Framework */,
-				A1E56BB0134FE5C900C75FF9 /* JSONKit Framework */,
 				080E96DDFE201D6D7F000001 /* Test App */,
 				A103336F0E32D0A100230ABD /* Tests */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -399,27 +359,6 @@
 			name = Additions;
 			sourceTree = "<group>";
 		};
-		A1E56BB0134FE5C900C75FF9 /* JSONKit Framework */ = {
-			isa = PBXGroup;
-			children = (
-				A1DA2ED0134FAE4C00A21642 /* JSONKit.h */,
-				A1DA2ED1134FAE4C00A21642 /* JSONKit.m */,
-				A1E56BB1134FE5C900C75FF9 /* Supporting Files */,
-			);
-			name = "JSONKit Framework";
-			path = JSONKit;
-			sourceTree = "<group>";
-		};
-		A1E56BB1134FE5C900C75FF9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				A1E56BB2134FE5C900C75FF9 /* JSONKit-Info.plist */,
-				A1E56BB3134FE5C900C75FF9 /* InfoPlist.strings */,
-				A1E56BB6134FE5C900C75FF9 /* JSONKit-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		A1E56BC1134FE5C900C75FF9 /* JSONKitTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -458,15 +397,6 @@
 				A16B90340E3D787500B1C248 /* PFCollectionRow.h in Headers */,
 				A1A11E7D0E3EE5D700F0C6E4 /* PFLockImageView.h in Headers */,
 				A10769A30F8D5B1900BA3DAE /* NSInvocationAdditions.h in Headers */,
-				A1DA2ED2134FAE4C00A21642 /* JSONKit.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A1E56BAA134FE5C900C75FF9 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1E56BDF13501B0700C75FF9 /* JSONKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,29 +455,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				A1E56BE21350218700C75FF9 /* PBXTargetDependency */,
 			);
 			name = PotionStorefront;
 			productName = PotionStorefront;
 			productReference = A154EF750E3BE81F002973AE /* PotionStorefront.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		A1E56BAC134FE5C900C75FF9 /* JSONKit */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A1E56BD0134FE5C900C75FF9 /* Build configuration list for PBXNativeTarget "JSONKit" */;
-			buildPhases = (
-				A1E56BA8134FE5C900C75FF9 /* Sources */,
-				A1E56BA9134FE5C900C75FF9 /* Frameworks */,
-				A1E56BAA134FE5C900C75FF9 /* Headers */,
-				A1E56BAB134FE5C900C75FF9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = JSONKit;
-			productName = JSONKit;
-			productReference = A1E56BAD134FE5C900C75FF9 /* JSONKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A1E56BBB134FE5C900C75FF9 /* JSONKitTests */ = {
@@ -562,7 +473,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				A1E56BBF134FE5C900C75FF9 /* PBXTargetDependency */,
 			);
 			name = JSONKitTests;
 			productName = JSONKitTests;
@@ -593,7 +503,6 @@
 			projectRoot = "";
 			targets = (
 				A154EF740E3BE81F002973AE /* PotionStorefront */,
-				A1E56BAC134FE5C900C75FF9 /* JSONKit */,
 				8D1107260486CEB800E47090 /* TestApp */,
 				A10333660E32CEF800230ABD /* Tests */,
 				A1E56BBB134FE5C900C75FF9 /* JSONKitTests */,
@@ -638,14 +547,6 @@
 				2139009B167542C5003E5CE8 /* dinersclub@2x.png in Resources */,
 				2139009E16754581003E5CE8 /* jcb.png in Resources */,
 				2139009F16754581003E5CE8 /* jcb@2x.png in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A1E56BAB134FE5C900C75FF9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1E56BB5134FE5C900C75FF9 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -724,20 +625,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A1E56BA8134FE5C900C75FF9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A1E56BD2134FE5F400C75FF9 /* JSONKit.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A1E56BB7134FE5C900C75FF9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A1E56BCB134FE5C900C75FF9 /* JSONKitTests.m in Sources */,
-				A1E56BD3134FE5F700C75FF9 /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,16 +645,6 @@
 			isa = PBXTargetDependency;
 			target = A154EF740E3BE81F002973AE /* PotionStorefront */;
 			targetProxy = A154EF7A0E3BE8C8002973AE /* PBXContainerItemProxy */;
-		};
-		A1E56BBF134FE5C900C75FF9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A1E56BAC134FE5C900C75FF9 /* JSONKit */;
-			targetProxy = A1E56BBE134FE5C900C75FF9 /* PBXContainerItemProxy */;
-		};
-		A1E56BE21350218700C75FF9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A1E56BAC134FE5C900C75FF9 /* JSONKit */;
-			targetProxy = A1E56BE11350218700C75FF9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -797,14 +679,6 @@
 				A154F11D0E3C1678002973AE /* English */,
 			);
 			name = countries.plist;
-			sourceTree = "<group>";
-		};
-		A1E56BB3134FE5C900C75FF9 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A1E56BB4134FE5C900C75FF9 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		A1E56BC4134FE5C900C75FF9 /* InfoPlist.strings */ = {
@@ -972,29 +846,6 @@
 			};
 			name = "Release-Intel";
 		};
-		A17E05D51457B818007A17B3 /* Release-Intel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JSONKit/JSONKit-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				INFOPLIST_FILE = "JSONKit/JSONKit-Info.plist";
-				INSTALL_PATH = "@rpath";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = "Release-Intel";
-		};
 		A17E05D61457B818007A17B3 /* Release-Intel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1062,55 +913,6 @@
 				WRAPPER_EXTENSION = octest;
 			};
 			name = "Release-Intel";
-		};
-		A1E56BCC134FE5C900C75FF9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JSONKit/JSONKit-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				INFOPLIST_FILE = "JSONKit/JSONKit-Info.plist";
-				INSTALL_PATH = "@rpath";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		A1E56BCD134FE5C900C75FF9 /* Release-Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JSONKit/JSONKit-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				INFOPLIST_FILE = "JSONKit/JSONKit-Info.plist";
-				INSTALL_PATH = "@rpath";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = "Release-Universal";
 		};
 		A1E56BCE134FE5C900C75FF9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1250,16 +1052,6 @@
 				A154EF770E3BE81F002973AE /* Debug */,
 				A154EF780E3BE81F002973AE /* Release-Universal */,
 				A17E05D41457B818007A17B3 /* Release-Intel */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Release-Universal";
-		};
-		A1E56BD0134FE5C900C75FF9 /* Build configuration list for PBXNativeTarget "JSONKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A1E56BCC134FE5C900C75FF9 /* Debug */,
-				A1E56BCD134FE5C900C75FF9 /* Release-Universal */,
-				A17E05D51457B818007A17B3 /* Release-Intel */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release-Universal";

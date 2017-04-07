@@ -10,8 +10,6 @@
 #import "PFAddress.h"
 #import "PotionStorefront.h"
 
-#import <JSONKit/JSONKit.h>
-
 #import "NSInvocationAdditions.h"
 
 @implementation PFOrder
@@ -104,19 +102,19 @@ static NSError *ErrorWithObject(id object) {
 									 nil]];
 }
 
-static NSError *ErrorWithJSONResponse(NSString *string) {
-	NSDictionary* dict = [string objectFromJSONString];
-	if ([dict isKindOfClass:[NSDictionary class]] == NO) goto fail;
-	@try {
-		return dict[@"message"];
-	}
-	@catch (NSException * e) {
-		NSLog(@"ERROR -- Got exception while trying to parse JSON error response: %@", e);
-		return ErrorWithObject(e);
-	}
-fail:
-	return ErrorWithObject(@"Could not process order due to an unexpected error. Please try again later.");
-}
+//static NSError *ErrorWithJSONResponse(NSString *string) {
+//	NSDictionary* dict = [string objectFromJSONString];
+//	if ([dict isKindOfClass:[NSDictionary class]] == NO) goto fail;
+//	@try {
+//		return dict[@"message"];
+//	}
+//	@catch (NSException * e) {
+//		NSLog(@"ERROR -- Got exception while trying to parse JSON error response: %@", e);
+//		return ErrorWithObject(e);
+//	}
+//fail:
+//	return ErrorWithObject(@"Could not process order due to an unexpected error. Please try again later.");
+//}
 
 - (id) initWithStripePublishableKey:(NSString*) argStripePublishableKey {
     if (![self init]) {
@@ -158,13 +156,12 @@ fail:
             [submitTokenRequest addValue:[NSString stringWithFormat:@"Bearer %@", stripePublishableKey] forHTTPHeaderField:@"Authorization"];
             
             NSData* responseData = [NSURLConnection sendSynchronousRequest:submitTokenRequest returningResponse:&response error:&error];
-			NSString *responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 			NSInteger statusCode = [response statusCode];
             
             NSString* token = nil;
             NSString* errorMessage = nil;
             @try {
-                NSDictionary *responseOrder = [responseBody objectFromJSONString];
+                NSDictionary *responseOrder = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
                 if (statusCode == 200) {
                     token = responseOrder[@"id"];
                 } else if (responseOrder) {
@@ -212,14 +209,13 @@ fail:
 				goto done;
 			}
 
-			responseBody = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
 			statusCode = [response statusCode];
             
             NSArray* regCodes = @[];
             BOOL success = NO;
             errorMessage = nil;
             @try {
-                NSDictionary* responseObj = [responseBody objectFromJSONString];
+                NSDictionary* responseObj = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
                 if (responseObj) {
                     errorMessage = responseObj[@"error"];
                     regCodes = responseObj[@"registrationCodes"];
