@@ -654,8 +654,8 @@ Gw
             <rect key="frame" x="0.0" y="0.0" width="464" height="78"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
             <subviews>
-                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="442">
-                    <rect key="frame" x="103" y="38" width="270" height="25"/>
+                <textField verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" id="442">
+                    <rect key="frame" x="81" y="38" width="292" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Product Name" id="443">
                         <font key="font" size="20" name="Helvetica-Bold"/>
@@ -663,12 +663,11 @@ Gw
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="performClick:" target="446" id="473"/>
                         <binding destination="438" name="value" keyPath="representedObject.name" id="453"/>
                     </connections>
                 </textField>
-                <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="460">
-                    <rect key="frame" x="103" y="18" width="270" height="15"/>
+                <textField verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" id="460">
+                    <rect key="frame" x="81" y="18" width="292" height="15"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Clever tagline about product here" id="461">
                         <font key="font" size="12" name="Helvetica"/>
@@ -676,19 +675,9 @@ Gw
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="performClick:" target="446" id="474"/>
                         <binding destination="438" name="value" keyPath="representedObject.byline" id="500"/>
                     </connections>
                 </textField>
-                <imageView id="487" customClass="PFClickThroughImageView">
-                    <rect key="frame" x="47" y="15" width="48" height="48"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="488"/>
-                    <connections>
-                        <action selector="performClick:" target="446" id="491"/>
-                        <binding destination="438" name="value" keyPath="representedObject.iconImage" id="490"/>
-                    </connections>
-                </imageView>
                 <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" id="454">
                     <rect key="frame" x="375" y="28" width="72" height="23"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
@@ -701,19 +690,14 @@ Gw
                         <binding destination="438" name="value" keyPath="representedObject.priceString" id="571"/>
                     </connections>
                 </textField>
-                <button tag="1" id="446">
-                    <rect key="frame" x="18" y="-2" width="448" height="82"/>
+                <imageView misplaced="YES" id="487" customClass="PFClickThroughImageView">
+                    <rect key="frame" x="20" y="15" width="48" height="48"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="447">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
+                    <imageCell key="cell" enabled="NO" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="488"/>
                     <connections>
-                        <accessibilityConnection property="title" destination="442" id="450"/>
-                        <action selector="toggleItem:" target="438" id="505"/>
-                        <binding destination="438" name="value" keyPath="representedObject.checked" id="508"/>
+                        <binding destination="438" name="value" keyPath="representedObject.iconImage" id="490"/>
                     </connections>
-                </button>
+                </imageView>
             </subviews>
         </view>
     </objects>
