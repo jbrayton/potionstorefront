@@ -28,20 +28,16 @@ static PotionStorefront *gStorefront = nil;
 	[[PFStoreWindowController sharedController] setDelegate:delegate];
 }
 
-- (NSURL *)potionStoreURL {
-	return [[PFStoreWindowController sharedController] storeURL];
+- (void) setApiUrlRoot:(NSString*) value {
+    [[PFStoreWindowController sharedController] setApiUrlRoot:value];
 }
 
-- (void)setPotionStoreURL:(NSURL *)URL {
-	[[PFStoreWindowController sharedController] setStoreURL:URL];
+- (void) setProductId:(NSString*) value {
+    [[PFStoreWindowController sharedController] setProductId:value];
 }
 
-- (NSURL *)productsPlistURL {
-	return [[PFStoreWindowController sharedController] productsPlistURL];
-}
-
-- (void)setProductsPlistURL:(NSURL *)URL {
-	[[PFStoreWindowController sharedController] setProductsPlistURL:URL];
+- (void) setWebStoreUrl:(NSString*) value {
+    [[PFStoreWindowController sharedController] setWebStoreUrl:value];
 }
 
 - (void) setStripePublishableKey:(NSString*) argStripePublishableKey {

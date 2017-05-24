@@ -14,13 +14,10 @@
 
 - (IBAction)buy:(id)sender {
 	[[PotionStorefront sharedStorefront] setDelegate:self];
-	[[PotionStorefront sharedStorefront] setPotionStoreURL:[NSURL URLWithString:@"https://localhost:3000/store"]];
-	[[PotionStorefront sharedStorefront] setProductsPlistURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/store/cloudpullproductinfo.plist"]];
-	[[PotionStorefront sharedStorefront] setWebStoreSupportsPayPal:NO googleCheckout:NO];
-    [[PotionStorefront sharedStorefront] setStripePublishableKey:@"pk_0JwHjZIfVZeGkFZMLqbkKLzsrkUXB"];
+    [[PotionStorefront sharedStorefront] setProductId:@"cloudpull"];
+    [[PotionStorefront sharedStorefront] setApiUrlRoot:@"https://storeapi.goldenhillsoftware.com/v1"];
+    [[PotionStorefront sharedStorefront] setWebStoreUrl:@"https://www.goldenhillsoftware.com/cloudpull/buy/"];
     [[PotionStorefront sharedStorefront] showWindow];
-	//[[PotionStorefront sharedStorefront] runModal];
-//	[[PotionStorefront sharedStorefront] beginSheetModalForWindow:mainWindow];
 }
 
 @end

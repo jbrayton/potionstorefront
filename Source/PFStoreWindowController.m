@@ -27,9 +27,23 @@ static PFStoreWindowController *gController = nil;
 - (id)init {
 	self = [super initWithWindowNibName:@"Store"];
 	if (self) {
-		order = [[PFOrder alloc] initWithStripePublishableKey:stripePublishableKey];
+        order = [[PFOrder alloc] initWithApiUrlRoot:_apiUrlRoot];
 	}
+    [self addObserver:self forKeyPath:@"apiUrlRoot" options:0 context:nil];
 	return self;
+}
+
+- (void) dealloc {
+    [self removeObserver:self forKeyPath:@"apiUrlRoot"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context{
+    if ([keyPath isEqualToString:@"apiUrlRoot"]) {
+        [order setApiUrlRoot:[self apiUrlRoot]];
+    }
 }
 
 
@@ -52,7 +66,7 @@ static PFStoreWindowController *gController = nil;
 	[headerView setGradient:
 	 [[NSGradient alloc] initWithStartingColor:[NSColor colorWithCalibratedRed:25/255.0 green:36/255.0 blue:43/255.0 alpha:1.0]
 									endingColor:[NSColor colorWithCalibratedRed:25/255.0 green:31/255.0 blue:38/255.0 alpha:1.0]]];
-
+    
 }
 
 static void PFUnbindEverythingInViewTree(NSView *view) {
@@ -93,18 +107,23 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	}
 }
 
+- (void) windowDidLoad {
+    
+}
+
 #pragma mark -
 #pragma mark Actions
 
 - (IBAction)showPricing:(id)sender {
-    //if ([[productCollectionView content] count] == 0) {
-        [order setLineItems:@[]];
-        [productCollectionView setContent:@[]];
-        [orderTotalField setHidden:YES];
-        [primaryButton setEnabled:NO];
-        [productFetchProgressSpinner startAnimation:self];
-        [PFProduct beginFetchingProductsFromURL:productsPlistURL delegate:self];
-    //}
+    [order setLineItems:@[]];
+    [productCollectionView setContent:@[]];
+    [orderTotalField setHidden:YES];
+    [primaryButton setEnabled:NO];
+    [productFetchProgressSpinner startAnimation:self];
+
+NSURL* url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/products/%@", _apiUrlRoot, _productId]];
+
+    [PFProduct beginFetchingProductsFromURL:url delegate:self];
 
 	// Don't validate email and credit card number right away when going from billing information to pricing
 	validateFieldsImmediately = NO;
@@ -213,7 +232,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 		[progressSpinner startAnimation:self];
 
 		[order setDelegate:self];
-		[order setSubmitURL:[NSURL URLWithString:[[storeURL absoluteString] stringByAppendingPathComponent:@"order.json"]]];
+        NSURL* orderUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@/orders", _apiUrlRoot]];
+		[order setSubmitURL:orderUrl];
 		[order submitInBackground];
 	}
 	else {
@@ -228,12 +248,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 		[self close];
 }
 
-- (IBAction)selectCountry:(id)sender {
-	[self controlTextDidChange:nil];
-}
-
 - (IBAction)openWebStore:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:storeURL];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:_webStoreUrl]];
 }
 
 - (IBAction)showRegistrationWindow:(id)sender {
@@ -333,36 +349,8 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 - (id)delegate { return delegate; }
 - (void)setDelegate:(id)object { delegate = object; }
 
-- (NSURL *)storeURL { return storeURL; }
-- (void)setStoreURL:(NSURL *)value {
-	if (storeURL != value) {
-		 storeURL = [value copy];
-		if ([[storeURL scheme] isEqualToString:@"https"] == NO) {
-			// Don't show lock if it's not really secure
-			[lockImageView removeFromSuperview];
-			lockImageView = nil;
-		}
-	}
-}
-
-- (NSURL *)productsPlistURL { return productsPlistURL; }
-- (void)setProductsPlistURL:(NSURL *)value {
-	if (productsPlistURL != value) {
-		productsPlistURL = [value copy];
-
-	}
-}
-
-- (void)setWebStoreSupportsPayPal:(BOOL)paypal googleCheckout:(BOOL)gc {
-}
-
 - (void)setCancelButtonQuits:(BOOL)flag {
 	cancelButtonQuits = flag;
-}
-
-- (void)setStripePublishableKey:(NSString*) argStripePublishableKey {
-    stripePublishableKey = argStripePublishableKey;
-    [order setStripePublishableKey:argStripePublishableKey];
 }
 
 #pragma mark -
@@ -446,6 +434,13 @@ static void PFUnbindEverythingInViewTree(NSView *view) {
 	}
 
 	return success;
+}
+
+- (BOOL)textView:(NSTextView *)textView
+   clickedOnLink:(id)link
+         atIndex:(NSUInteger)charIndex {
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:_webStoreUrl]];
+    return YES;
 }
 
 @end

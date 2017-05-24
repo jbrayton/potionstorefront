@@ -22,9 +22,9 @@ typedef enum {
 
 @interface PFOrder : NSObject {
 	id delegate;
-
-    NSString* stripePublishableKey;
     
+    NSString* apiUrlRoot;
+
 	NSArray *lineItems;
 	NSString *currencyCode;
 	PFAddress *billingAddress;
@@ -37,15 +37,14 @@ typedef enum {
 	NSURL *submitURL;
 }
 
-- (id) initWithStripePublishableKey:(NSString*) argStripePublishableKey;
-
-- (void) setStripePublishableKey:(NSString*) argStripePublishableKey;
+- (id) initWithApiUrlRoot:(NSString*) argApiUrlRoot;
 
 - (void)submitInBackground;
 
 - (NSString *)cleanedCreditCardNumber;
 - (PFCreditCardType)creditCardType;
 - (NSString *)creditCardTypeString;
+- (void) setApiUrlRoot:(NSString*) value;
 
 // Simple accessors
 

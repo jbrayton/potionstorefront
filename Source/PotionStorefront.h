@@ -21,15 +21,9 @@
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
 
-- (NSURL *)potionStoreURL;
-- (void)setPotionStoreURL:(NSURL *)URL;
-
-- (NSURL *)productsPlistURL;
-- (void)setProductsPlistURL:(NSURL *)URL;
-
-- (void) setStripePublishableKey:(NSString*) argPublishableKey;
-
-- (void)setWebStoreSupportsPayPal:(BOOL)flag1 googleCheckout:(BOOL)flag2;
+- (void) setApiUrlRoot:(NSString*) value;
+- (void) setProductId:(NSString*) value;
+- (void) setWebStoreUrl:(NSString*) value;
 
 - (void)setCancelButtonQuits:(BOOL)flag;
 

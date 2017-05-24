@@ -17,7 +17,7 @@ enum {
 @class PFAddress;
 @class PFBackgroundView;
 
-@interface PFStoreWindowController : NSWindowController {
+@interface PFStoreWindowController : NSWindowController<NSTextViewDelegate> {
 	IBOutlet PFBackgroundView *headerView;
 	IBOutlet PFBackgroundView *mainContentView;
 
@@ -34,10 +34,10 @@ enum {
 	IBOutlet NSCollectionView *productCollectionView;
 	IBOutlet NSTextField *orderTotalField;
 	IBOutlet NSProgressIndicator *productFetchProgressSpinner;
+    IBOutlet NSTextView* webBasedLink;
 
 	// STUFF FOR BILLING VIEW
 	IBOutlet NSView *billingView;
-	IBOutlet NSView *addressSelectionContainerView;
 
 	// Labels
 	IBOutlet NSTextField *nameLabel;
@@ -54,8 +54,6 @@ enum {
 	IBOutlet NSTextField *creditCardExpirationMonthField;
 	IBOutlet NSTextField *creditCardExpirationYearField;
 
-    NSString* stripePublishableKey;
-    
 	PFAddress *customAddress;
 
 	// STUFF FOR THANK YOU VIEW
@@ -64,13 +62,15 @@ enum {
 	// OTHER STUFF
 	id delegate;
 
-	NSURL *storeURL;
-	NSURL *productsPlistURL;
 	PFOrder *order;
 	NSInteger paymentMethod;
 	BOOL cancelButtonQuits;
 	BOOL validateFieldsImmediately;
 }
+
+@property NSString* productId;
+@property NSString* apiUrlRoot;
+@property NSString* webStoreUrl;
 
 + (id)sharedController;
 
@@ -79,13 +79,7 @@ enum {
 
 // Accessors
 - (PFOrder *)order;
-- (NSURL *)storeURL;
-- (void)setStoreURL:(NSURL *)URL;
-- (NSURL *)productsPlistURL;
-- (void)setProductsPlistURL:(NSURL *)value;
-- (void)setWebStoreSupportsPayPal:(BOOL)flag1 googleCheckout:(BOOL)flag2;
 - (void)setCancelButtonQuits:(BOOL)flag;
-- (void)setStripePublishableKey:(NSString*) argStripePublishableKey;
 
 // Actions
 - (IBAction)showPricing:(id)sender;

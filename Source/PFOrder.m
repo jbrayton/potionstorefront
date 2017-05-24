@@ -26,11 +26,10 @@
 		[[NSBundle bundleWithPath:frameworkPath] load];
 	}
 
-	billingAddress = [[PFAddress alloc] init];
-	[billingAddress fillUsingAddressBook];
 
 	// Default to USD for now
 	[self setCurrencyCode:@"USD"];
+    billingAddress = [[PFAddress alloc] init];
 
 	return self;
 }
@@ -45,40 +44,6 @@
 
 	 submitURL = nil;
 
-}
-
-- (NSDictionary *)dictionaryRepresentationForPotionStore {
-	PFAddress *a = [self billingAddress];
-	NSString *creditCard = [self creditCardTypeString];
-	NSAssert(creditCard != nil, @"credit card type should not be unknown at this point");
-
-	NSMutableDictionary *orderDict = [NSMutableDictionary dictionary];
-
-	@try {
-		// This should give no trouble by the time we're here since everything
-		// should be validated already. Putting it inside @try just in case though.
-		[orderDict setObject:[a name]	forKey:@"name"];
-		[orderDict setObject:[a email]		forKey:@"email"];
-		[orderDict setObject:creditCard		forKey:@"payment_type"];
-		[orderDict setObject:[self cleanedCreditCardNumber]			forKey:@"cc_number"];
-		[orderDict setObject:[self creditCardSecurityCode]		forKey:@"cc_code"];
-		[orderDict setObject:[[self creditCardExpirationMonth] stringValue]	forKey:@"cc_month"];
-		[orderDict setObject:[[self creditCardExpirationYear] stringValue] forKey:@"cc_year"];
-
-		NSMutableDictionary *itemsDict = [NSMutableDictionary dictionaryWithCapacity:[lineItems count]];
-		for (PFProduct *item in lineItems) {
-			// Items dictionary uses the product_id as the key and the quantity as the value
-			// I KNOW this is ugly but it's a carry over from when I first wrote Potion Store.
-			[itemsDict setObject:[NSNumber numberWithInteger:1] forKey:[[item identifierNumber] stringValue]];
-		}
-
-		[orderDict setObject:itemsDict forKey:@"items"];
-	}
-	@catch (NSException *e) {
-		NSLog(@"Got exception while building order dictionary: %@", e);
-	}
-
-	return orderDict;
 }
 
 // Helper error constructor used in submitInBackground
@@ -102,30 +67,12 @@ static NSError *ErrorWithObject(id object) {
 									 nil]];
 }
 
-//static NSError *ErrorWithJSONResponse(NSString *string) {
-//	NSDictionary* dict = [string objectFromJSONString];
-//	if ([dict isKindOfClass:[NSDictionary class]] == NO) goto fail;
-//	@try {
-//		return dict[@"message"];
-//	}
-//	@catch (NSException * e) {
-//		NSLog(@"ERROR -- Got exception while trying to parse JSON error response: %@", e);
-//		return ErrorWithObject(e);
-//	}
-//fail:
-//	return ErrorWithObject(@"Could not process order due to an unexpected error. Please try again later.");
-//}
-
-- (id) initWithStripePublishableKey:(NSString*) argStripePublishableKey {
+- (id) initWithApiUrlRoot:(NSString*) argApiUrlRoot {
     if (![self init]) {
         return nil;
     }
-    stripePublishableKey = argStripePublishableKey;
+    apiUrlRoot = argApiUrlRoot;
     return self;
-}
-
-- (void) setStripePublishableKey:(NSString*) argStripePublishableKey {
-    stripePublishableKey = argStripePublishableKey;
 }
 
 - (void)submitInBackground {
@@ -140,26 +87,58 @@ static NSError *ErrorWithObject(id object) {
         NSHTTPURLResponse *response = nil;
 
 		@try {
+            NSString* publishableKeyUrl = [NSString stringWithFormat:@"%@/configurations/stripe_publishable_key", apiUrlRoot];
+            NSURLRequest* publishableKeyRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:publishableKeyUrl]];
+            NSData* responseData = [NSURLConnection sendSynchronousRequest:publishableKeyRequest returningResponse:&response error:&error];
+            NSInteger statusCode = [response statusCode];
+            
+            NSString* stripePublishableKey = nil;
+            NSString* errorMessage = nil;
+            @try {
+                NSDictionary *tokenInfo = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
+                if ([response statusCode] == 200) {
+                    stripePublishableKey = tokenInfo[@"value"];
+                }
+            } @catch (NSException* e) {
+            }
+            if (!stripePublishableKey) {
+                errorMessage = @"Unable to retrieve the Stripe key.";
+            }
+            if ([errorMessage length]) {
+                if ([errorMessage characterAtIndex:[errorMessage length]-1] != '.') {
+                    errorMessage = [errorMessage stringByAppendingString:@"."];
+                }
+                errorMessage = [errorMessage stringByAppendingString:@" Your credit card was not charged."];
+                NSError* error = ErrorWithObject(errorMessage);
+                NSDictionary* info = @{ @"order": self, @"error": error } ;
+                [delegate performSelectorOnMainThread:@selector(orderDidFinishSubmitting:) withObject:info waitUntilDone:YES];
+                return;
+            }
+            
+            
             
             NSString* cardNumber = [self creditCardNumber];
             cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@" " withString:@""];
             cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"\t" withString:@""];
             cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"-" withString:@""];
             cardNumber = [cardNumber stringByReplacingOccurrencesOfString:@"_" withString:@""];
+
+            NSMutableURLRequest* submitTokenRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://api.stripe.com/v1/tokens"]];
+            [submitTokenRequest setHTTPMethod:@"POST"];
             NSString* cardNumberEncoded = [self stringByUrlEncoding:cardNumber];
             NSString* secCodeEncoded = [self stringByUrlEncoding:[self creditCardSecurityCode]];
             NSString* args = [NSString stringWithFormat:@"card[number]=%@&card[exp_month]=%@&card[exp_year]=%@&card[cvc]=%@", cardNumberEncoded, [self creditCardExpirationMonth], [self creditCardExpirationYear], secCodeEncoded];
-            NSMutableURLRequest* submitTokenRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://api.stripe.com/v1/tokens"]];
-            [submitTokenRequest setHTTPMethod:@"POST"];
             [submitTokenRequest setHTTPBody:[args dataUsingEncoding:NSUTF8StringEncoding]];
+            
+            
+            
             [submitTokenRequest setHTTPShouldHandleCookies:NO];
             [submitTokenRequest addValue:[NSString stringWithFormat:@"Bearer %@", stripePublishableKey] forHTTPHeaderField:@"Authorization"];
             
-            NSData* responseData = [NSURLConnection sendSynchronousRequest:submitTokenRequest returningResponse:&response error:&error];
-			NSInteger statusCode = [response statusCode];
+            responseData = [NSURLConnection sendSynchronousRequest:submitTokenRequest returningResponse:&response error:&error];
+			statusCode = [response statusCode];
             
             NSString* token = nil;
-            NSString* errorMessage = nil;
             @try {
                 NSDictionary *responseOrder = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
                 if (statusCode == 200) {
@@ -186,21 +165,17 @@ static NSError *ErrorWithObject(id object) {
                 return;
             }
             
+            NSString* product = [[self lineItems][0] identifier];
             
-            NSString* tokenEncoded = [self stringByUrlEncoding:token];
-            NSString* nameEncoded = [self stringByUrlEncoding:[[self billingAddress] name]];
-            NSString* emailEncoded = [self stringByUrlEncoding:[[self billingAddress] email]];
-            NSNumber* product = [[self lineItems][0] identifierNumber];
-            NSInteger quantity = 1;
-            NSInteger totalPriceCents = [self totalPriceCents];
+            NSString* urlString = [NSString stringWithFormat:@"%@/orders", apiUrlRoot];
+            NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
             
-            NSMutableURLRequest* registerRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://secure.goldenhillsoftware.com/store/processtransaction.php"]];
-            args = [NSString stringWithFormat:@"token=%@&name=%@&email=%@&product=%@&quantity=%ld&totalPriceCents=%ld", tokenEncoded, nameEncoded, emailEncoded, product, quantity, totalPriceCents];
-            //if (couponCode) {
-            //    args = [args stringByAppendingFormat:@"&couponCode=%@", couponCodeEncoded];
-            //}
+            NSNumber* priceNumber = [NSNumber numberWithInteger:[self totalPriceCents]];
+            NSDictionary* orderObj = @{ @"customer": @{ @"name": [[self billingAddress] name], @"emailAddress": [[self billingAddress] email] }, @"items": @[ @{ @"productId": product, @"quantity": @1, @"unitPriceUsCents": priceNumber } ], @"payment": @{ @"totalPriceUsCents": priceNumber, @"stripeToken": token } };
+            
+            [registerRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
             [registerRequest setHTTPMethod:@"POST"];
-            [registerRequest setHTTPBody:[args dataUsingEncoding:NSUTF8StringEncoding]];
+            [registerRequest setHTTPBody:[NSJSONSerialization dataWithJSONObject:orderObj options:0 error:nil]];
             [registerRequest setHTTPShouldHandleCookies:NO];
 
 			responseData = [NSURLConnection sendSynchronousRequest:registerRequest returningResponse:&response error:&error];
@@ -213,18 +188,36 @@ static NSError *ErrorWithObject(id object) {
             
             NSArray* regCodes = @[];
             BOOL success = NO;
+            BOOL errorParsingSuccess = NO;
             errorMessage = nil;
             @try {
-                NSDictionary* responseObj = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
-                if (responseObj) {
-                    errorMessage = responseObj[@"error"];
-                    regCodes = responseObj[@"registrationCodes"];
-                    success = [responseObj[@"success"] boolValue];
-                } else {
-                    errorMessage = NSLocalizedString(@"Unable to retrieve registration codes. Please email us at support@goldenhillsoftware.com.", @"");
+                if ([[response allHeaderFields][@"Content-Type"] rangeOfString:@"/json"].location != NSNotFound) {
+                    if (statusCode == 201) {
+                        success = YES;
+                        @try {
+                            NSDictionary* responseObj = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
+                            regCodes = @[responseObj[@"items"][0][@"registrationCodes"][0]];
+                        } @catch( NSException* e) {
+                            errorParsingSuccess = YES;
+                        }
+                    } else if (statusCode == 400) {
+                        NSDictionary* responseObj = [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];
+                        if ([responseObj[@"errors"] count]) {
+                            errorMessage = responseObj[@"errors"][0][@"message"];
+                        } else {
+                            errorMessage = responseObj[@"message"];
+                        }
+                    }
                 }
             } @catch (NSException* e) {
+            }
+            
+            if ((!success) && (!errorMessage)) {
                 errorMessage = NSLocalizedString(@"Unable to retrieve registration codes. Please email us at support@goldenhillsoftware.com.", @"");
+            }
+            
+            if (errorParsingSuccess) {
+                errorMessage = NSLocalizedString(@"The order succeeded but the response could not be interpretted. Please email us at support@goldenhilsoftware.com.", @"");
             }
 
             
@@ -318,6 +311,10 @@ done:
 		default:
 			return nil;
 	}
+}
+
+- (void) setApiUrlRoot:(NSString*) value {
+    apiUrlRoot = value;
 }
 
 // These are used in binding enabled state of card type buttons

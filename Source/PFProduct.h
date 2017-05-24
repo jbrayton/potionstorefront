@@ -13,7 +13,7 @@
 @class PFOrder;
 
 @interface PFProduct : NSObject {
-	NSNumber *identifierNumber;
+	NSString *identifier;
 	NSString *currencyCode;
 	NSInteger priceCents;
 	NSString *name;
@@ -36,8 +36,8 @@
 @property (assign) BOOL checked;
 
 // Accessors
-- (NSNumber *)identifierNumber;
-- (void)setIdentifierNumber:(NSNumber *)value;
+- (NSString *)identifier;
+- (void)setIdentifier:(NSString *)value;
 
 - (NSInteger)priceCents;
 - (void)setPriceCents:(NSInteger)value;

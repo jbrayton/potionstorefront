@@ -38,35 +38,30 @@ static NSError *ErrorWithObject(id object) {
 }
 
 + (void) beginFetching:(NSDictionary*) argInfo {
+    
+    NSURLSession* session = [NSURLSession sharedSession];
+    
     NSURL* url = argInfo[@"url"];
     PFStoreWindowController* windowController = argInfo[@"wc"];
+
+    NSURLSessionDataTask* task = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        if ((response) && ([(NSHTTPURLResponse*) response statusCode] == 200) && (data)) {
     
-	NSError *error = nil;
-	NSMutableArray *products = nil;
-    
-	@try {
-        NSArray *array = [NSArray arrayWithContentsOfURL:url];
-        if (array == nil) {
-            error = ErrorWithObject(@"Please make sure that you are connected to the Internet or try again later.");
-        }
-        else {
-            NSMutableArray* tmpProducts = [NSMutableArray arrayWithCapacity:[array count]];
-            for (NSDictionary *dict in array) {
-                [tmpProducts addObject:[PFProduct productWithDictionary:dict]];
+            NSDictionary* productInfo = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            NSArray* products = @[[self productWithDictionary:productInfo]];
+            if (products) {
+                [windowController performSelectorOnMainThread:@selector(fetchedProducts:) withObject:products waitUntilDone:YES];
+                return;
             }
-            products = tmpProducts;
+            
+            
         }
-	} @catch (NSException *e) {
-		NSLog(@"ERROR -- Exception while getting products: %@", e);
-		error = ErrorWithObject([NSString stringWithFormat:NSLocalizedString(@"Error: %@", nil), [e description]]);
-	}
-    
-    if (products) {
-        [windowController performSelectorOnMainThread:@selector(fetchedProducts:) withObject:products waitUntilDone:YES];
-    } else {
         [windowController performSelectorOnMainThread:@selector(failedToFetchProductsWithError:) withObject:error waitUntilDone:YES];
-    }
+    }];
+    [task resume];
     
+
 }
 
 + (void)beginFetchingProductsFromURL:(NSURL *)aURL delegate:(id)delegate {
@@ -80,10 +75,10 @@ static NSError *ErrorWithObject(id object) {
 
 + (PFProduct *)productWithDictionary:(NSDictionary *)dictionary {
 	PFProduct *p = [[PFProduct alloc] init];
-	[p setIdentifierNumber:[dictionary objectForKey:@"id"]];
+	[p setIdentifier:[dictionary objectForKey:@"id"]];
 	[p setName:[dictionary objectForKey:@"name"]];
-	[p setByline:[dictionary objectForKey:@"byline"]];
-	[p setPriceCents:[[dictionary objectForKey:@"productPriceCents"] intValue]];
+	[p setByline:[dictionary objectForKey:@"tagline"]];
+	[p setPriceCents:[[dictionary objectForKey:@"unitPriceUsCents"] intValue]];
 
 	// Check for a image path first to see if we can load it from the bundle
 	NSString *iconImagePath = [dictionary objectForKey:@"iconImagePath"];
@@ -111,7 +106,7 @@ static NSError *ErrorWithObject(id object) {
 
 	[p setRadioGroupName:[dictionary objectForKey:@"radioGroupName"]];
 
-	[p setChecked:[[dictionary objectForKey:@"checked"] boolValue]];
+	[p setChecked:YES];
 	return p;
 }
 
@@ -120,8 +115,8 @@ static NSError *ErrorWithObject(id object) {
 
 - (NSArray *)children { return nil; }
 
-- (NSNumber *)identifierNumber { return identifierNumber; }
-- (void)setIdentifierNumber:(NSNumber *)value { if (identifierNumber != value) {  identifierNumber = [value copy]; } }
+- (NSString *)identifier { return identifier; }
+- (void)setIdentifier:(NSString *)value { if (identifier != value) {  identifier = [value copy]; } }
 
 - (NSInteger)priceCents { return priceCents; }
 - (void)setPriceCents:(NSInteger)value { priceCents = value; }
